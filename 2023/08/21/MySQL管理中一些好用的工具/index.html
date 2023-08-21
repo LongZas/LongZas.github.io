@@ -8,17 +8,30 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: 杂记 | LongZ的博客园</title>
+  <title>MySQL管理中一些好用的工具 | LongZ的博客园</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="不值一提的普通人">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LongZ的博客园">
-<meta property="og:url" content="http://example.com/tags/%E6%9D%82%E8%AE%B0/index.html">
+  <meta name="description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。 12345678语法：	mysql [options] [database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL管理中一些好用的工具">
+<meta property="og:url" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="LongZ的博客园">
-<meta property="og:description" content="不值一提的普通人">
+<meta property="og:description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。 12345678语法：	mysql [options] [database">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692599426923.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601031574.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601058810.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601112952.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601210913.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601286150.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602165824.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602348027.png">
+<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602418005.png">
+<meta property="article:published_time" content="2023-08-21T06:16:35.000Z">
+<meta property="article:modified_time" content="2023-08-21T07:23:57.177Z">
 <meta property="article:author" content="Long HY">
+<meta property="article:tag" content="杂记">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692599426923.png">
   
     <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
   
@@ -170,36 +183,104 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-MySQL管理中一些好用的工具" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      MySQL管理中一些好用的工具
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+
+        
+        <a href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" class="archive-article-date">
   	<time datetime="2023-08-21T06:16:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-21</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/">MySQL管理中一些好用的工具</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
+        <!-- 需要添加的位置 -->
+          <!-- 开始添加字数统计-->
           
+            
+<div style="margin-top:10px;" class="word_count">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">781字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">3分</span>
+      </span>
+    </span>
+</div>
+
+            
+          <!-- 添加完成 -->
+          
+          
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+            
+
+        
+
+        <p>在安装完MySQL后，会自带一些好用的管理工具，比如<code>mysql</code>，但是这里的<code>mysql</code>一般指的MySQL客户端而不是MySQL服务器。</p>
+<p>如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷：</p>
+<h5 id="1、mysql"><a href="#1、mysql" class="headerlink" title="1、mysql"></a>1、mysql</h5><p>这里的<code>mysql</code>指的是客户端工具。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	mysql [options] [database] [sql]</span><br><span class="line">选项：</span><br><span class="line">	-u, --user=name                 #指定用户名</span><br><span class="line">	-p, --password[=name]           #指定连接密码</span><br><span class="line">	-h, --host=name                 #指定服务器IP或域名</span><br><span class="line">	-P, --port=port                 #指定连接端口</span><br><span class="line">	-e, --execute=name              #执行SQL语句并退出</span><br></pre></td></tr></table></figure>
+
+<p>下面是一个实例实例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p1008 db01 -e &quot;select * from test&quot;  #连接db01的数据库，查询test表格里面全部的数据</span><br></pre></td></tr></table></figure>
+
+<p><strong>注：-e 选项可以在MySQL客户端执行SQL语句，而不用连接到MySQL数据库再执行，对于一些批处理脚本，这种方法是尤其方便的。这里注意不要忘了“-e”，否则语法不正确。</strong></p>
+<p><img src="1692599426923.png" alt="1692599426923"></p>
+<h5 id="2、mysqladmin"><a href="#2、mysqladmin" class="headerlink" title="2、mysqladmin"></a>2、mysqladmin</h5><p>mysqladmin 是一个执行管理操作的客户端程序。可以用它来检查服务器的配置和当前状态、创建并删除数据库等。比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Where command is a one or more of: (Commands may be shortened)</span><br><span class="line">  create databasename   Create a new database</span><br><span class="line">  debug                 Instruct server to write debug information to log</span><br><span class="line">  drop databasename     Delete a database and all its tables</span><br><span class="line">  extended-status       Gives an extended status message from the server</span><br><span class="line">  flush-hosts           Flush all cached hosts</span><br><span class="line">  flush-logs            Flush all logs</span><br><span class="line">  flush-status          Clear status variables</span><br><span class="line">  flush-tables          Flush all tables</span><br><span class="line">  flush-threads         Flush the thread cache</span><br><span class="line">  flush-privileges      Reload grant tables (same as reload)</span><br><span class="line">  kill id,id,...        Kill mysql threads</span><br><span class="line">  password [new-password] Change old password to new-password in current format</span><br><span class="line">  ping                  Check if mysqld is alive</span><br><span class="line">  processlist           Show list of active threads in server</span><br><span class="line">  reload                Reload grant tables</span><br><span class="line">  refresh               Flush all tables and close and open logfiles</span><br><span class="line">  shutdown              Take server down</span><br><span class="line">  status                Gives a short status message from the server</span><br><span class="line">  start-replica         Start replication</span><br><span class="line">  start-slave           Deprecated: use start-replica instead</span><br><span class="line">  stop-replica          Stop replication</span><br><span class="line">  stop-slave            Deprecated: use stop-replica instead</span><br><span class="line">  variables             Prints variables available</span><br><span class="line">  version               Get version info from server</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<p>2.1 创建一个数据库<code>db02</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p1008 create &quot;db02&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="1692601031574.png" alt="1692601031574"></p>
+<p><img src="1692601058810.png" alt="1692601058810"></p>
+<p>2.2 删除刚刚创建的数据库 <code>db02</code>，会提示是否删除，输入<code>y</code>确认删除。</p>
+<p><img src="1692601112952.png" alt="1692601112952"></p>
+<p><img src="1692601210913.png" alt="1692601210913"></p>
+<p>2.3 查看数据库的版本号。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p1008 version</span><br></pre></td></tr></table></figure>
+
+<p><img src="1692601286150.png" alt="1692601286150"></p>
+<h5 id="3、mysqlshow"><a href="#3、mysqlshow" class="headerlink" title="3、mysqlshow"></a>3、mysqlshow</h5><p>mysqlshow 客户端对象查找工具，用来很快地查找存在哪些数据库、数据库中的表、表中的列或者索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	mysqlshow [options] [db_name [table_name [col_name]]]</span><br><span class="line">选项：</span><br><span class="line">	--count      #显示数据库及表的统计信息</span><br><span class="line">	-i           #显示指定数据库或者指定表的状态信息</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<p>3.1 查询每个数据库的表数量及表中记录的数量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 --count</span><br></pre></td></tr></table></figure>
+
+<p><img src="1692602165824.png" alt="1692602165824"></p>
+<p>3.2 查询db01库中每个表中的字段数及行数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 db01 --count</span><br></pre></td></tr></table></figure>
+
+<p><img src="1692602348027.png" alt="1692602348027"></p>
+<p>3.3 查询db01库中test表的详细信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 db01 test --count</span><br></pre></td></tr></table></figure>
+
+<p><img src="1692602418005.png" alt="1692602418005"></p>
+<p><strong>其实MySQL管理工具还有一些，由于篇幅原因，这里没有做详细的介绍，比如还有mysqlbinlog是二进制相关、mysqldump是备份相关、mysqlimport&#x2F;source是数据库的数据导入导出相关，感兴趣的可以去官网查看，或者后续会继续分享。</strong></p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -211,95 +292,56 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-18T07:00:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-18</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">序列化过程中版本号不一致的问题</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">往虚拟机的MySQL数据库插入大量数据的一种解决方案</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-15T08:39:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">Github访问速度慢的一个解决方案</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
+
 
 
           </div>
@@ -322,9 +364,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
