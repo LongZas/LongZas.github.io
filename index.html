@@ -200,53 +200,12 @@
     
     <div class="article-entry" itemprop="articleBody">
             
-
-        
-
         <p>在安装完MySQL后，会自带一些好用的管理工具，比如<code>mysql</code>，但是这里的<code>mysql</code>一般指的MySQL客户端而不是MySQL服务器。</p>
 <p>如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷：</p>
 <h5 id="1、mysql"><a href="#1、mysql" class="headerlink" title="1、mysql"></a>1、mysql</h5><p>这里的<code>mysql</code>指的是客户端工具。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	mysql [options] [database] [sql]</span><br><span class="line">选项：</span><br><span class="line">	-u, --user=name                 #指定用户名</span><br><span class="line">	-p, --password[=name]           #指定连接密码</span><br><span class="line">	-h, --host=name                 #指定服务器IP或域名</span><br><span class="line">	-P, --port=port                 #指定连接端口</span><br><span class="line">	-e, --execute=name              #执行SQL语句并退出</span><br></pre></td></tr></table></figure>
-
-<p>下面是一个实例实例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p1008 db01 -e &quot;select * from test&quot;  #连接db01的数据库，查询test表格里面全部的数据</span><br></pre></td></tr></table></figure>
-
-<p><strong>注：-e 选项可以在MySQL客户端执行SQL语句，而不用连接到MySQL数据库再执行，对于一些批处理脚本，这种方法是尤其方便的。这里注意不要忘了“-e”，否则语法不正确。</strong></p>
-<p><img src="1692599426923.png" alt="1692599426923"></p>
-<h5 id="2、mysqladmin"><a href="#2、mysqladmin" class="headerlink" title="2、mysqladmin"></a>2、mysqladmin</h5><p>mysqladmin 是一个执行管理操作的客户端程序。可以用它来检查服务器的配置和当前状态、创建并删除数据库等。比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Where command is a one or more of: (Commands may be shortened)</span><br><span class="line">  create databasename   Create a new database</span><br><span class="line">  debug                 Instruct server to write debug information to log</span><br><span class="line">  drop databasename     Delete a database and all its tables</span><br><span class="line">  extended-status       Gives an extended status message from the server</span><br><span class="line">  flush-hosts           Flush all cached hosts</span><br><span class="line">  flush-logs            Flush all logs</span><br><span class="line">  flush-status          Clear status variables</span><br><span class="line">  flush-tables          Flush all tables</span><br><span class="line">  flush-threads         Flush the thread cache</span><br><span class="line">  flush-privileges      Reload grant tables (same as reload)</span><br><span class="line">  kill id,id,...        Kill mysql threads</span><br><span class="line">  password [new-password] Change old password to new-password in current format</span><br><span class="line">  ping                  Check if mysqld is alive</span><br><span class="line">  processlist           Show list of active threads in server</span><br><span class="line">  reload                Reload grant tables</span><br><span class="line">  refresh               Flush all tables and close and open logfiles</span><br><span class="line">  shutdown              Take server down</span><br><span class="line">  status                Gives a short status message from the server</span><br><span class="line">  start-replica         Start replication</span><br><span class="line">  start-slave           Deprecated: use start-replica instead</span><br><span class="line">  stop-replica          Stop replication</span><br><span class="line">  stop-slave            Deprecated: use stop-replica instead</span><br><span class="line">  variables             Prints variables available</span><br><span class="line">  version               Get version info from server</span><br></pre></td></tr></table></figure>
-
-<p>示例：</p>
-<p>2.1 创建一个数据库<code>db02</code>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p1008 create &quot;db02&quot;</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692601031574.png" alt="1692601031574"></p>
-<p><img src="1692601058810.png" alt="1692601058810"></p>
-<p>2.2 删除刚刚创建的数据库 <code>db02</code>，会提示是否删除，输入<code>y</code>确认删除。</p>
-<p><img src="1692601112952.png" alt="1692601112952"></p>
-<p><img src="1692601210913.png" alt="1692601210913"></p>
-<p>2.3 查看数据库的版本号。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p1008 version</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692601286150.png" alt="1692601286150"></p>
-<h5 id="3、mysqlshow"><a href="#3、mysqlshow" class="headerlink" title="3、mysqlshow"></a>3、mysqlshow</h5><p>mysqlshow 客户端对象查找工具，用来很快地查找存在哪些数据库、数据库中的表、表中的列或者索引。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	mysqlshow [options] [db_name [table_name [col_name]]]</span><br><span class="line">选项：</span><br><span class="line">	--count      #显示数据库及表的统计信息</span><br><span class="line">	-i           #显示指定数据库或者指定表的状态信息</span><br></pre></td></tr></table></figure>
-
-<p>示例：</p>
-<p>3.1 查询每个数据库的表数量及表中记录的数量</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 --count</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692602165824.png" alt="1692602165824"></p>
-<p>3.2 查询db01库中每个表中的字段数及行数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 db01 --count</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692602348027.png" alt="1692602348027"></p>
-<p>3.3 查询db01库中test表的详细信息</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 db01 test --count</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692602418005.png" alt="1692602418005"></p>
-<p><strong>其实MySQL管理工具还有一些，由于篇幅原因，这里没有做详细的介绍，比如还有mysqlbinlog是二进制相关、mysqldump是备份相关、mysqlimport&#x2F;source是数据库的数据导入导出相关，感兴趣的可以去官网查看，或者后续会继续分享。</strong></p>
-
+        
+          <a class="article-more-a" href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/#more">more >></a>
+        
       
     </div>
     <div class="article-info article-info-index">

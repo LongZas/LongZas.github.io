@@ -10,12 +10,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>MySQL管理中一些好用的工具 | LongZ的博客园</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。 12345678语法：	mysql [options] [database">
+  <meta name="description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL管理中一些好用的工具">
 <meta property="og:url" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="LongZ的博客园">
-<meta property="og:description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。 12345678语法：	mysql [options] [database">
+<meta property="og:description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692599426923.png">
 <meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601031574.png">
@@ -27,7 +27,7 @@
 <meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602348027.png">
 <meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602418005.png">
 <meta property="article:published_time" content="2023-08-21T06:16:35.000Z">
-<meta property="article:modified_time" content="2023-08-21T07:23:57.177Z">
+<meta property="article:modified_time" content="2023-08-21T07:25:41.609Z">
 <meta property="article:author" content="Long HY">
 <meta property="article:tag" content="杂记">
 <meta name="twitter:card" content="summary">
@@ -234,7 +234,7 @@
 
         <p>在安装完MySQL后，会自带一些好用的管理工具，比如<code>mysql</code>，但是这里的<code>mysql</code>一般指的MySQL客户端而不是MySQL服务器。</p>
 <p>如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷：</p>
-<h5 id="1、mysql"><a href="#1、mysql" class="headerlink" title="1、mysql"></a>1、mysql</h5><p>这里的<code>mysql</code>指的是客户端工具。</p>
+<h5 id="1、mysql"><a href="#1、mysql" class="headerlink" title="1、mysql"></a>1、mysql</h5><p>这里的<code>mysql</code>指的是客户端工具。<span id="more"></span></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	mysql [options] [database] [sql]</span><br><span class="line">选项：</span><br><span class="line">	-u, --user=name                 #指定用户名</span><br><span class="line">	-p, --password[=name]           #指定连接密码</span><br><span class="line">	-h, --host=name                 #指定服务器IP或域名</span><br><span class="line">	-P, --port=port                 #指定连接端口</span><br><span class="line">	-e, --execute=name              #执行SQL语句并退出</span><br></pre></td></tr></table></figure>
 
 <p>下面是一个实例实例：</p>
