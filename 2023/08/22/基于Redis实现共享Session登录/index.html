@@ -8,30 +8,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>MySQL管理中一些好用的工具 | LongZ的博客园</title>
+  <title>基于Redis实现共享Session登录 | LongZ的博客园</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。">
+  <meta name="description" content="大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。 Se">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL管理中一些好用的工具">
-<meta property="og:url" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:title" content="基于Redis实现共享Session登录">
+<meta property="og:url" content="http://example.com/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/index.html">
 <meta property="og:site_name" content="LongZ的博客园">
-<meta property="og:description" content="在安装完MySQL后，会自带一些好用的管理工具，比如mysql，但是这里的mysql一般指的MySQL客户端而不是MySQL服务器。 如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷： 1、mysql这里的mysql指的是客户端工具。">
+<meta property="og:description" content="大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。 Se">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692599426923.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601031574.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601058810.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601112952.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601210913.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692601286150.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602165824.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602348027.png">
-<meta property="og:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692602418005.png">
-<meta property="article:published_time" content="2023-08-21T06:16:35.000Z">
-<meta property="article:modified_time" content="2023-08-21T07:25:41.609Z">
+<meta property="article:published_time" content="2023-08-22T04:30:32.000Z">
+<meta property="article:modified_time" content="2023-08-22T05:22:28.568Z">
 <meta property="article:author" content="Long HY">
-<meta property="article:tag" content="杂记">
+<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/1692599426923.png">
   
     <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
   
@@ -183,20 +173,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-MySQL管理中一些好用的工具" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-基于Redis实现共享Session登录" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      MySQL管理中一些好用的工具
+      基于Redis实现共享Session登录
     </h1>
   
 
         
-        <a href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" class="archive-article-date">
-  	<time datetime="2023-08-21T06:16:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-21</time>
+        <a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" class="archive-article-date">
+  	<time datetime="2023-08-22T04:30:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-22</time>
 </a>
         <!-- 需要添加的位置 -->
           <!-- 开始添加字数统计-->
@@ -207,7 +197,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">781字</span>
+        <span class="post-count">1.5k字</span>
       </span>
     </span>
 
@@ -216,7 +206,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">3分</span>
+        <span class="post-count">6分</span>
       </span>
     </span>
 </div>
@@ -232,49 +222,28 @@
 
         
 
-        <p>在安装完MySQL后，会自带一些好用的管理工具，比如<code>mysql</code>，但是这里的<code>mysql</code>一般指的MySQL客户端而不是MySQL服务器。</p>
-<p>如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷：</p>
-<h5 id="1、mysql"><a href="#1、mysql" class="headerlink" title="1、mysql"></a>1、mysql</h5><p>这里的<code>mysql</code>指的是客户端工具。<span id="more"></span></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	mysql [options] [database] [sql]</span><br><span class="line">选项：</span><br><span class="line">	-u, --user=name                 #指定用户名</span><br><span class="line">	-p, --password[=name]           #指定连接密码</span><br><span class="line">	-h, --host=name                 #指定服务器IP或域名</span><br><span class="line">	-P, --port=port                 #指定连接端口</span><br><span class="line">	-e, --execute=name              #执行SQL语句并退出</span><br></pre></td></tr></table></figure>
+        <p>大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。</p>
+<p>Session共享问题主要说的是多台Tomcat并不共享session存储空间，当请求切换到不同tomcat服务器时导致数据丢失的问题。那么久需要思考一个替代的方案了，而且这个替代方案应该满足以下三点：数据共享、内存存储、key：value结构。满足以上三点的，主流的服务器可以选择 Redis 服务器，首先时基于<strong>内存存储</strong>的，访问速度快；<strong>集群数据共享</strong>，可以解决session混淆问题；而且是key：value结构存储数据的，存取方便；并且具有各种缓存淘汰机制，不用过于担心性能问题。<span id="more"></span></p>
+<p>Spring默认提供了一个StringRedisTemplate类，它的key和value的序列化方式默认就是String方式，可以省去我们自定义RedisTemplate的过程，可以直接调用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">private StringRedisTemplate stringRedisTemplate;</span><br></pre></td></tr></table></figure>
 
-<p>下面是一个实例实例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p1008 db01 -e &quot;select * from test&quot;  #连接db01的数据库，查询test表格里面全部的数据</span><br></pre></td></tr></table></figure>
+<p>下面是基于StringRedisTemplate来实现的Session共享：</p>
+<p>一般的登录登录页面可能会用到验证码来校验，这时也可以传入session来辅助登录。</p>
+<p>下面是一个根据手机号来获取验证码登录的例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public Result sendCode(String phone, HttpSession session) &#123;</span><br><span class="line">       // 1. 先判断手机号有没有符合规范</span><br><span class="line">       if (RegexUtils.isPhoneInvalid(phone)) &#123;</span><br><span class="line">           // 2. 如果不符合就返回错误信息</span><br><span class="line">           return Result.fail(&quot;手机号码无效格式！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 3. 如果手机号码符合符合，就生成一个验证码</span><br><span class="line">       String code = RandomUtil.randomNumbers(6);</span><br><span class="line">       // 4. 生成的验证码保存到 redis 里面(用手机号区分)</span><br><span class="line">       stringRedisTemplate.opsForValue().set(LOGIN_CODE_KEY + phone, code, LOGIN_CODE_TTL, TimeUnit.MINUTES);</span><br><span class="line">       // 5. 生成的验证码发送给用户端（模拟发送校验码，具体实际开发自行替换）</span><br><span class="line">       log.info(&quot;生成的验证码信息：&#123;&#125;&quot;, code);</span><br><span class="line">       // 6. 返回信息</span><br><span class="line">       return Result.ok();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>注：-e 选项可以在MySQL客户端执行SQL语句，而不用连接到MySQL数据库再执行，对于一些批处理脚本，这种方法是尤其方便的。这里注意不要忘了“-e”，否则语法不正确。</strong></p>
-<p><img src="1692599426923.png" alt="1692599426923"></p>
-<h5 id="2、mysqladmin"><a href="#2、mysqladmin" class="headerlink" title="2、mysqladmin"></a>2、mysqladmin</h5><p>mysqladmin 是一个执行管理操作的客户端程序。可以用它来检查服务器的配置和当前状态、创建并删除数据库等。比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Where command is a one or more of: (Commands may be shortened)</span><br><span class="line">  create databasename   Create a new database</span><br><span class="line">  debug                 Instruct server to write debug information to log</span><br><span class="line">  drop databasename     Delete a database and all its tables</span><br><span class="line">  extended-status       Gives an extended status message from the server</span><br><span class="line">  flush-hosts           Flush all cached hosts</span><br><span class="line">  flush-logs            Flush all logs</span><br><span class="line">  flush-status          Clear status variables</span><br><span class="line">  flush-tables          Flush all tables</span><br><span class="line">  flush-threads         Flush the thread cache</span><br><span class="line">  flush-privileges      Reload grant tables (same as reload)</span><br><span class="line">  kill id,id,...        Kill mysql threads</span><br><span class="line">  password [new-password] Change old password to new-password in current format</span><br><span class="line">  ping                  Check if mysqld is alive</span><br><span class="line">  processlist           Show list of active threads in server</span><br><span class="line">  reload                Reload grant tables</span><br><span class="line">  refresh               Flush all tables and close and open logfiles</span><br><span class="line">  shutdown              Take server down</span><br><span class="line">  status                Gives a short status message from the server</span><br><span class="line">  start-replica         Start replication</span><br><span class="line">  start-slave           Deprecated: use start-replica instead</span><br><span class="line">  stop-replica          Stop replication</span><br><span class="line">  stop-slave            Deprecated: use stop-replica instead</span><br><span class="line">  variables             Prints variables available</span><br><span class="line">  version               Get version info from server</span><br></pre></td></tr></table></figure>
+<p><strong>注意：RegexUtils是自定义的工具，<code>isPhoneInvalid</code>方法是用来判断手机号是否符合规范，符合才能发送验证码；<code>LOGIN_CODE_KEY</code>和<code>LOGIN_CODE_TTL</code>静态变量都是自定义的值，防止多处编写出错，第一个是Redis的key的前缀，第二个是验证码过期时间。</strong></p>
+<p>登录的共享session的处理，并且用到了hutool工具包，代码如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public Result login(LoginFormDTO loginForm, HttpSession session) &#123;</span><br><span class="line">       // 1. 先校验手机号格式</span><br><span class="line">       String phone = loginForm.getPhone();</span><br><span class="line">       if (RegexUtils.isPhoneInvalid(phone)) &#123;</span><br><span class="line">           // 如果不符合就返回错误信息</span><br><span class="line">           return Result.fail(&quot;手机号码无效格式！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 2. 校验验证码</span><br><span class="line">       String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + phone);</span><br><span class="line">       String code = loginForm.getCode();</span><br><span class="line">       if (cacheCode == null || !cacheCode.equals(code))&#123;</span><br><span class="line">           // 验证码错误</span><br><span class="line">           return Result.fail(&quot;验证码错误！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 3. 查询数据库，判断用户是否存在</span><br><span class="line">       QueryWrapper&lt;User&gt; queryWrapper = new QueryWrapper&lt;&gt;();</span><br><span class="line">       queryWrapper.eq(&quot;phone&quot;,phone);</span><br><span class="line">       User user = userMapper.selectOne(queryWrapper);</span><br><span class="line"></span><br><span class="line">       // 4. 用户不存在则新建用户并保存</span><br><span class="line">       if (user == null)&#123;</span><br><span class="line">           user = createUserWithPhone(phone);</span><br><span class="line">       &#125;</span><br><span class="line">       // 5. 把用户信息保存到 Redis 中</span><br><span class="line">       // 5.1 随机生成一个 token 作为令牌存储到 Redis 中</span><br><span class="line">       String token = UUID.randomUUID().toString(false);</span><br><span class="line"></span><br><span class="line">       // 5.2 将 User 对象转换为 HashMap 对象存储</span><br><span class="line">       UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);</span><br><span class="line">       Map&lt;String, Object&gt; userMap = BeanUtil.beanToMap(userDTO,</span><br><span class="line">               new HashMap&lt;&gt;(),</span><br><span class="line">               CopyOptions.create().setIgnoreNullValue(true)  // 忽略空值参数</span><br><span class="line">                       .setFieldValueEditor((k, v) -&gt; v.toString()));  // 处理非String类型转换失败问题</span><br><span class="line">       // 6. 把 token 保存到 redis 中</span><br><span class="line">       String keyToken = LOGIN_USER_KEY + token;</span><br><span class="line">       stringRedisTemplate.opsForHash().putAll(keyToken, userMap);</span><br><span class="line">       // 7. 设置过期时间</span><br><span class="line">       stringRedisTemplate.expire(keyToken, LOGIN_USER_TTL, TimeUnit.MINUTES);</span><br><span class="line"></span><br><span class="line">       // 8. 返回 token</span><br><span class="line">       return Result.ok(token);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
-<p>示例：</p>
-<p>2.1 创建一个数据库<code>db02</code>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p1008 create &quot;db02&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：LoginFormDTO是只封装了手机号、验证码和密码三个字段，防止数据过多而导致有泄露的风险。这里使用UUID来作为token来替代session存储到redis服务器中，当用户登录的时候，就会尝试获取token，如果能够获取到，就直接登录并刷新token有效期，为空就创建存储并放行。</strong></p>
+<p>对于token有效期的刷新，可以自定义一个拦截器，用来刷新session的有效期，防止用户在使用过程中session过期的问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">public class RefreshInterceptor implements HandlerInterceptor &#123;</span><br><span class="line"></span><br><span class="line">    private StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    public RefreshInterceptor(StringRedisTemplate stringRedisTemplate) &#123;</span><br><span class="line">        this.stringRedisTemplate = stringRedisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">        // 基于 Redis 实现登录</span><br><span class="line">        // 1. 获取请求头中的 token</span><br><span class="line">        String token = request.getHeader(&quot;authorization&quot;);</span><br><span class="line">        if (StrUtil.isEmpty(token)) &#123;</span><br><span class="line">            // 不管有没有登录，一直放行</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        // 2. 基于 Token 来获取 redis 中的用户信息</span><br><span class="line">        String key = RedisConstants.LOGIN_USER_KEY + token;</span><br><span class="line">        Map&lt;Object, Object&gt; userMap = stringRedisTemplate.opsForHash().entries(key);</span><br><span class="line">        // 3. 判断用户是否存在</span><br><span class="line">        if (userMap.isEmpty()) &#123;</span><br><span class="line">            // 这里也是一直放行</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        // 5. 将查询到的Hash用户转换成 UserDto 对象</span><br><span class="line">        UserDTO userDTO = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);</span><br><span class="line">        // 6. 用户存在，存到 ThreadLocal中</span><br><span class="line">        UserHolder.saveUser(userDTO);</span><br><span class="line">        // 7. 刷新 token 有效期</span><br><span class="line">        stringRedisTemplate.expire(key, RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES);</span><br><span class="line">        // 8. 放行</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception &#123;</span><br><span class="line">        // 获取完用户信息后及时销毁，防止信息泄漏</span><br><span class="line">        UserHolder.removeUser();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="1692601031574.png" alt="1692601031574"></p>
-<p><img src="1692601058810.png" alt="1692601058810"></p>
-<p>2.2 删除刚刚创建的数据库 <code>db02</code>，会提示是否删除，输入<code>y</code>确认删除。</p>
-<p><img src="1692601112952.png" alt="1692601112952"></p>
-<p><img src="1692601210913.png" alt="1692601210913"></p>
-<p>2.3 查看数据库的版本号。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p1008 version</span><br></pre></td></tr></table></figure>
+<p><strong>注意：UserHolder是基于ThreadLocal来实现的，在同一个线程内，方法区内存是共享的，所以可以获得这个线程的信息。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class UserHolder &#123;</span><br><span class="line">    private static final ThreadLocal&lt;UserDTO&gt; tl = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static void saveUser(UserDTO user)&#123;</span><br><span class="line">        tl.set(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static UserDTO getUser()&#123;</span><br><span class="line">        return tl.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void removeUser()&#123;</span><br><span class="line">        tl.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="1692601286150.png" alt="1692601286150"></p>
-<h5 id="3、mysqlshow"><a href="#3、mysqlshow" class="headerlink" title="3、mysqlshow"></a>3、mysqlshow</h5><p>mysqlshow 客户端对象查找工具，用来很快地查找存在哪些数据库、数据库中的表、表中的列或者索引。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	mysqlshow [options] [db_name [table_name [col_name]]]</span><br><span class="line">选项：</span><br><span class="line">	--count      #显示数据库及表的统计信息</span><br><span class="line">	-i           #显示指定数据库或者指定表的状态信息</span><br></pre></td></tr></table></figure>
-
-<p>示例：</p>
-<p>3.1 查询每个数据库的表数量及表中记录的数量</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 --count</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692602165824.png" alt="1692602165824"></p>
-<p>3.2 查询db01库中每个表中的字段数及行数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 db01 --count</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692602348027.png" alt="1692602348027"></p>
-<p>3.3 查询db01库中test表的详细信息</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlshow -uroot -p1008 db01 test --count</span><br></pre></td></tr></table></figure>
-
-<p><img src="1692602418005.png" alt="1692602418005"></p>
-<p><strong>其实MySQL管理工具还有一些，由于篇幅原因，这里没有做详细的介绍，比如还有mysqlbinlog是二进制相关、mysqldump是备份相关、mysqlimport&#x2F;source是数据库的数据导入导出相关，感兴趣的可以去官网查看，或者后续会继续分享。</strong></p>
+<p><strong>以上是基于Redis实现Session共享的问题的一种解决方案，还有更好的替代方案，比如在处理拦截的时候，可以使用更专业的工具，如spring getaway 可以很好地在微服务架构中应用；比如生成token的算法，可以选择雪花算法等。</strong></p>
 
       
     </div>
@@ -286,7 +255,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
         		</li>
       		
 		</ul>
@@ -305,18 +274,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          基于Redis实现共享Session登录
-        
-      </div>
-    </a>
   
-  
-    <a href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">序列化过程中版本号不一致的问题</div>
+    <a href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">MySQL管理中一些好用的工具</div>
       <i class="icon-circle-right"></i>
     </a>
   

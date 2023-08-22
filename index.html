@@ -173,6 +173,88 @@
             
   
   
+    <article id="post-基于Redis实现共享Session登录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/">基于Redis实现共享Session登录</a>
+    </h1>
+  
+
+        
+        <a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" class="archive-article-date">
+  	<time datetime="2023-08-22T04:30:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-22</time>
+</a>
+        <!-- 需要添加的位置 -->
+          <!-- 开始添加字数统计-->
+          
+            
+            
+          <!-- 添加完成 -->
+          
+          
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+            
+        <p>大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。</p>
+<p>Session共享问题主要说的是多台Tomcat并不共享session存储空间，当请求切换到不同tomcat服务器时导致数据丢失的问题。那么久需要思考一个替代的方案了，而且这个替代方案应该满足以下三点：数据共享、内存存储、key：value结构。满足以上三点的，主流的服务器可以选择 Redis 服务器，首先时基于<strong>内存存储</strong>的，访问速度快；<strong>集群数据共享</strong>，可以解决session混淆问题；而且是key：value结构存储数据的，存取方便；并且具有各种缓存淘汰机制，不用过于担心性能问题。</p>
+        
+          <a class="article-more-a" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/#more">more >></a>
+        
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-MySQL管理中一些好用的工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
