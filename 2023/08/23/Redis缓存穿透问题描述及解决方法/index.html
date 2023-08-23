@@ -8,17 +8,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>LongZ的博客园</title>
+  <title>Redis缓存穿透问题及解决方法 | LongZ的博客园</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="不值一提的普通人">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LongZ的博客园">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="首先我们需要知道正常客户端请求到Redis缓存的工作流程： 正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis缓存穿透问题及解决方法">
+<meta property="og:url" content="http://example.com/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="LongZ的博客园">
-<meta property="og:description" content="不值一提的普通人">
+<meta property="og:description" content="首先我们需要知道正常客户端请求到Redis缓存的工作流程： 正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/cacheThrough.png">
+<meta property="article:published_time" content="2023-08-23T06:26:50.000Z">
+<meta property="article:modified_time" content="2023-08-23T07:41:26.607Z">
 <meta property="article:author" content="Long HY">
+<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/cacheThrough.png">
   
     <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
   
@@ -170,17 +175,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
-    <article id="post-Redis缓存穿透问题描述及解决方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Redis缓存穿透问题描述及解决方法" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">Redis缓存穿透问题及解决方法</a>
+    <h1 class="article-title" itemprop="name">
+      Redis缓存穿透问题及解决方法
     </h1>
   
 
@@ -192,6 +194,25 @@
           <!-- 开始添加字数统计-->
           
             
+<div style="margin-top:10px;" class="word_count">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">1k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">3分</span>
+      </span>
+    </span>
+</div>
+
             
           <!-- 添加完成 -->
           
@@ -200,11 +221,22 @@
     
     <div class="article-entry" itemprop="articleBody">
             
+
+        
+
         <p>首先我们需要知道正常客户端请求到Redis缓存的工作流程：</p>
-<p>正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也存在一些特殊的情况，发送的请求中，访问的数据不存在，就会一直重复在Redis服务器和数据库中来回查询，会大大加重服务器的负担，这就是<strong>缓存穿透</strong>。</p>
-        
-          <a class="article-more-a" href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/#more">more >></a>
-        
+<p>正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也存在一些特殊的情况，发送的请求中，访问的数据不存在，就会一直重复在Redis服务器和数据库中来回查询，会大大加重服务器的负担，这就是<strong>缓存穿透</strong>。<span id="more"></span></p>
+<img src="cacheThrough.png" alt="cacheThrough" style="zoom:80%;">
+
+<p><strong>缓存穿透</strong>是指客户端请求的数据在缓存和数据库中都不存在，这样缓存永远不会生效，导致这些请求都会透过缓存去访问数据库，最后返回空。我所知道的解决方法有两种，一种是布隆过滤，一种是Redis缓存空对象。</p>
+<p>（1）布隆过滤：这种方法占用的内存少，没有多余的key，但是实现复杂，而且其底层是基于hash来实现，就会存在误判的可能（hash冲突问题），且笔者对这种方法的了解没有太过深入，不敢轻易写下解决方案，只作为一种思路的拓展建议。</p>
+<p>（2）Redis缓存空对象：这种方法比较好理解，就是当客户端请求的数据不存在的时候，就返回一个空对象，然后再给这个对象设置一个很短的过期时间，这样下次查询该数据的时候，就可以直接从缓存中拿到，从而达到减小数据库的压力的目的。因此，这各方法也是有缺点的，首先会占用缓存空间，如果空缓存过多，会大量占用内存空间，其次就是会导致缓存与数据库数据不一致的问题，即便已经给空缓存设置了较短的过期时间，但是也会导致这段时间内的数据不一致的问题。但这种方法实现简单，且易于维护。</p>
+<p>下面是基于第二种方法来实现的解决缓存穿透问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * 作用： 从 redis 中查询目标信息，如果没有，就去数据库查询再返回给 redis</span><br><span class="line">    * @param id 实体类id</span><br><span class="line">    * @return 返回查询的信息</span><br><span class="line">    */</span><br><span class="line">   @Override</span><br><span class="line">   public Result QueryRedisById(Long id) &#123;</span><br><span class="line">       String key = RedisConstants.CACHE_SHOP_KEY + id;</span><br><span class="line">       // 1. 根据提交的 id 从 Redis 中查询商铺缓存信息(可以直接操作Hash，就不用转换Json了)</span><br><span class="line">       String shopMsg = stringRedisTemplate.opsForValue().get(key);</span><br><span class="line">       // 2. 判断缓存中是否存在商铺信息</span><br><span class="line">       if (StrUtil.isNotBlank(shopMsg)) &#123;</span><br><span class="line">           // 3. 存在，则返回商铺信息</span><br><span class="line">           Shop shop = JSONUtil.toBean(shopMsg, Shop.class);</span><br><span class="line">           return Result.ok(shop);</span><br><span class="line">       &#125;</span><br><span class="line">       // 判断是否命中空值</span><br><span class="line">       if (shopMsg != null) &#123;    // 等价于 shopMsg == &quot;&quot;，上面已经判断过 null 的情况</span><br><span class="line">           // 返回错误信息</span><br><span class="line">           return Result.fail(&quot;店铺信息不存在!&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 4. 不存在，根据id查询数据库</span><br><span class="line">       Shop shop = getById(id);</span><br><span class="line">       // 4.1 商铺不存在，返回错误码404</span><br><span class="line">       if (shop == null) &#123;</span><br><span class="line">           // 不存在，设置一个空值，防止缓存穿透</span><br><span class="line">           stringRedisTemplate.opsForValue().set( key, &quot;&quot;,CACHE_NULL_TTL, TimeUnit.MINUTES);</span><br><span class="line">           // 返回错误信息</span><br><span class="line">           return Result.fail(&quot;店铺信息不存在！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       // 4.2 商铺存在，即将商铺信息写入到redis中（设置过期时间）</span><br><span class="line">       stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(shop), CACHE_SHOP_TTL, TimeUnit.MINUTES);</span><br><span class="line">       // 5. 返回商铺信息</span><br><span class="line">       return Result.ok(shop);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：这个方法使用hutool工具包对Bean对象进行转换。CACHE_SHOP_KEY、CACHE_NULL_TTL和CACHE_SHOP_TTL都是自定义的全局关键字，防止后续书写错误。</strong></p>
+<p>以上就是解决缓存穿透的一种方法，最后要说的是，如果缓存信息是变化较小的数据或者固定的数据，可以不设置缓存的过期时间。</p>
+
       
     </div>
     <div class="article-info article-info-index">
@@ -224,16 +256,24 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">展开全文 >></a>
-        </p>
-      
 
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">基于Redis实现共享Session登录</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -253,506 +293,18 @@
 
 
 
-
   
-    <article id="post-基于Redis实现共享Session登录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/">基于Redis实现共享Session登录</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2023-08-22T04:30:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-22</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p>大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。</p>
-<p>Session共享问题主要说的是多台Tomcat并不共享session存储空间，当请求切换到不同tomcat服务器时导致数据丢失的问题。那么久需要思考一个替代的方案了，而且这个替代方案应该满足以下三点：数据共享、内存存储、key：value结构。满足以上三点的，主流的服务器可以选择 Redis 服务器，首先时基于<strong>内存存储</strong>的，访问速度快；<strong>集群数据共享</strong>，可以解决session混淆问题；而且是key：value结构存储数据的，存取方便；并且具有各种缓存淘汰机制，不用过于担心性能问题。</p>
-        
-          <a class="article-more-a" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/#more">more >></a>
-        
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-MySQL管理中一些好用的工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/">MySQL管理中一些好用的工具</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" class="archive-article-date">
-  	<time datetime="2023-08-21T06:16:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-21</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p>在安装完MySQL后，会自带一些好用的管理工具，比如<code>mysql</code>，但是这里的<code>mysql</code>一般指的MySQL客户端而不是MySQL服务器。</p>
-<p>如果你只是单纯想查看一个数据库的表数据、创建一个数据库或者其他操作，而又不想连接MySQL服务器，那么可以使用下面的方式进行操作会更加便捷：</p>
-<h5 id="1、mysql"><a href="#1、mysql" class="headerlink" title="1、mysql"></a>1、mysql</h5><p>这里的<code>mysql</code>指的是客户端工具。</p>
-        
-          <a class="article-more-a" href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/#more">more >></a>
-        
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-序列化过程中版本号不一致的问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/">序列化过程中版本号不一致的问题</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2023-08-20T04:08:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-20</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p>在使用序列化流的时候，是需要给实体类实现<code>Serializable</code>这个接口类的，它没有抽象方法，这种类型的接口叫标记型接口。只有实现了这个接口，当前类才能被序列化。</p>
-<p>在我们实现这个接口的时候，会生成一个隐藏的序列化版本号，在代码中不可见，但是这个版本号非常重要。因为在实际的开发中，业务可能会发生改变，比如需要对实体类的属性进行改动，这个时候，对类的属性修改完后，如果没有给这个实体类加一个序列化版本号，就会报错，如下：</p>
-        
-          <a class="article-more-a" href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/#more">more >></a>
-        
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-往虚拟机的Mysql数据库插入大量数据的一种解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">往虚拟机的MySQL数据库插入大量数据的一种解决方案</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-18T07:00:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-18</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p>今天学习Docker，在弄MySQL容器的时候，需要往这个数据库容器里面插入大量的数据，这时在想，即便是写一个程序来导入数据应该也需要花费不少的时间吧。我就在想，有没有一种解决方案可以快速解决这个问题，突然想起了之前在学MySQL时，学到的SQL优化问题，里面就有针对<code>insert</code>做出的优化，就是把一个特定格式的文本文件，直接使用MySQL提供的<code>load</code>指令来把特定格式的文本文件加载到指定的数据库里面。</p>
-<p>下面是我整理的一种优化方法：</p>
-        
-          <a class="article-more-a" href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/#more">more >></a>
-        
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-对System.out.println()这个打印语句的认识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/">对System.out.println()这个打印语句的认识</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/" class="archive-article-date">
-  	<time datetime="2023-08-16T06:37:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-16</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p>在Java中，System 这个类是由 <code>final</code> 关键字修饰的，表明这是一个不可被继承类，而 <code>out</code> 这个变量实际上是System类中的一个静态的、公有的、<code>final</code> 的打印流对象。这个对象被定义在System类中，可以被所有的类和对象访问和使用，用来进行输出操作。 </p>
-<p> 因此，尽管System类不能被继承，但是它的静态成员（如<code>out</code>）仍然可以被访问和使用，这就是为什么我们可以使用<code>System.out</code>来进行输出的原因。静态成员并不属于任何类的实例，它们属于类本身，因此不受到<code>final</code>修饰的影响。</p>
-        
-          <a class="article-more-a" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/#more">more >></a>
-        
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Github访问速度慢的一个解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">Github访问速度慢的一个解决方案</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-15T08:39:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-15</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p><strong>在国内，GitHub的访问速度可能较慢的原因主要有网络延迟和网络阻断问题。</strong></p>
-<ol>
-<li>网络延迟问题：GitHub的服务器架设在全球各地，因此在全球都有大量的用户。由于网络延迟的原因，不同地域的访问速度会有很大的差异，在国内的访问速度也可能较慢。</li>
-<li>网络阻断问题：由于中国的特殊网络环境，部分GitHub的IP被墙，这意味着部分内容无法在国内访问，这也会导致GitHub在中国的访问速度受到限制。虽然GitHub已经支持了HTTPS协议，但因为一些原因，使用HTTPS也可能无法完全避免网络阻断问题。</li></ol>
-        
-          <a class="article-more-a" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/#more">more >></a>
-        
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
 
   
+
+  
+
+  
+
+
+
           </div>
         </div>
       </div>
@@ -772,8 +324,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
