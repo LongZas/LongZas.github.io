@@ -173,6 +173,88 @@
             
   
   
+    <article id="post-Redis-缓存击穿问题及解决方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">Redis 缓存击穿问题及解决方法</a>
+    </h1>
+  
+
+        
+        <a href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2023-08-24T03:29:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-24</time>
+</a>
+        <!-- 需要添加的位置 -->
+          <!-- 开始添加字数统计-->
+          
+            
+            
+          <!-- 添加完成 -->
+          
+          
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+            
+        <p>缓存击穿有相似之处，都是直接绕过Redis缓存去访问数据库，但是场景不一样。缓存击穿应用的场景主要是热点数据或者被频繁访问的数据。缓存击穿指的是某个热点数据过期或者被删除，导致大量请求直接绕过缓存去访问数据库，导致数据库压力瞬间升高，甚至崩溃。解决缓存击穿这个问题，可以使用互斥锁或者分布式的方式，保证同一时间里面，只有一个线程去查询和重建缓存。</p>
+<p>下面是模拟两个线程在争夺互斥锁的场景，在同一台服务器下，当线程1拿到互斥锁后，JVM内部的锁监视器就会检测到有线程在运行，其他线程就不能执行了。等到线程1查询数据且重建完缓存后，就会去释放锁。一旦线程1释放锁，线程2就可以拿到互斥锁，接着查询缓存发现已经存在，就会直接返回数据并且释放锁。</p>
+        
+          <a class="article-more-a" href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/#more">more >></a>
+        
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Redis缓存穿透问题描述及解决方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -201,7 +283,7 @@
     <div class="article-entry" itemprop="articleBody">
             
         <p>首先我们需要知道正常客户端请求到Redis缓存的工作流程：</p>
-<p>正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也存在一些特殊的情况，发送的请求中，访问的数据不存在，就会一直重复在Redis服务器和数据库中来回查询，会大大加重服务器的负担，这就是<strong>缓存穿透</strong>。</p>
+<p>正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也存在一些特殊的情况，发送的请求中，访问的数据不存在，就会透过Redis服务器，直接访问到数据库，会大大加重服务器的负担，这就是<strong>缓存穿透</strong>。</p>
         
           <a class="article-more-a" href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/#more">more >></a>
         

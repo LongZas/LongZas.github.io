@@ -17,13 +17,13 @@
 <meta property="og:site_name" content="LongZ的博客园">
 <meta property="og:description" content="首先我们需要知道正常客户端请求到Redis缓存的工作流程： 正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/cacheThrough.png">
+<meta property="og:image" content="http://example.com/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/1692847594518.png">
 <meta property="article:published_time" content="2023-08-23T06:26:50.000Z">
-<meta property="article:modified_time" content="2023-08-23T07:41:26.607Z">
+<meta property="article:modified_time" content="2023-08-24T04:37:14.136Z">
 <meta property="article:author" content="Long HY">
 <meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/cacheThrough.png">
+<meta name="twitter:image" content="http://example.com/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/1692847594518.png">
   
     <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
   
@@ -225,9 +225,8 @@
         
 
         <p>首先我们需要知道正常客户端请求到Redis缓存的工作流程：</p>
-<p>正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也存在一些特殊的情况，发送的请求中，访问的数据不存在，就会一直重复在Redis服务器和数据库中来回查询，会大大加重服务器的负担，这就是<strong>缓存穿透</strong>。<span id="more"></span></p>
-<img src="cacheThrough.png" alt="cacheThrough" style="zoom:80%;">
-
+<p>正常的情况下，如果 客户端请求的数据有做Redis缓存处理的话，就会直接去访问Redis服务器，查询服务器中是否有这个缓存，如果存在，就直接返回响应给客户端；如果没有命中缓存，就会发送SQL命令去数据库，查询到数据后，把数据缓存到Redis服务器并且返回给客户端，等到下次访问这个数据的时候，就可以直接从Redis服务器中取出数据了。但是也存在一些特殊的情况，发送的请求中，访问的数据不存在，就会透过Redis服务器，直接访问到数据库，会大大加重服务器的负担，这就是<strong>缓存穿透</strong>。<span id="more"></span></p>
+<p><img src="1692847594518.png" alt="1692847594518"></p>
 <p><strong>缓存穿透</strong>是指客户端请求的数据在缓存和数据库中都不存在，这样缓存永远不会生效，导致这些请求都会透过缓存去访问数据库，最后返回空。我所知道的解决方法有两种，一种是布隆过滤，一种是Redis缓存空对象。</p>
 <p>（1）布隆过滤：这种方法占用的内存少，没有多余的key，但是实现复杂，而且其底层是基于hash来实现，就会存在误判的可能（hash冲突问题），且笔者对这种方法的了解没有太过深入，不敢轻易写下解决方案，只作为一种思路的拓展建议。</p>
 <p>（2）Redis缓存空对象：这种方法比较好理解，就是当客户端请求的数据不存在的时候，就返回一个空对象，然后再给这个对象设置一个很短的过期时间，这样下次查询该数据的时候，就可以直接从缓存中拿到，从而达到减小数据库的压力的目的。因此，这各方法也是有缺点的，首先会占用缓存空间，如果空缓存过多，会大量占用内存空间，其次就是会导致缓存与数据库数据不一致的问题，即便已经给空缓存设置了较短的过期时间，但是也会导致这段时间内的数据不一致的问题。但这种方法实现简单，且易于维护。</p>
@@ -265,6 +264,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Redis 缓存击穿问题及解决方法
+        
+      </div>
+    </a>
   
   
     <a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" id="article-nav-older" class="article-nav-link-wrap">
