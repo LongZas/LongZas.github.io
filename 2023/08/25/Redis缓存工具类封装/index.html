@@ -8,16 +8,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: 随笔 | LongZ的博客园</title>
+  <title>Redis缓存工具类封装 | LongZ的博客园</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="不值一提的普通人">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LongZ的博客园">
-<meta property="og:url" content="http://example.com/tags/%E9%9A%8F%E7%AC%94/index.html">
+  <meta name="description" content="前面给出的哪些解决Redis缓存问题的方法里面，在一个业务系统里面有可能会在多出地方使用到相同或者类似的操作，就需要反复去创建这些方法。既然业务内容操作差不多，那么我们是否可以把这些类给封装成一个适合多种场景的工具类呢？显然，这里就是想要探讨这个问题。可以把一些重复出现的方法封装起来，定义好需要传入哪些参数，等到需要使用的时候，就按要求传入这些方法需要的参数就可以实现这个功能。 下面是对缓存穿透、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis缓存工具类封装">
+<meta property="og:url" content="http://example.com/2023/08/25/Redis%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B0%81%E8%A3%85/index.html">
 <meta property="og:site_name" content="LongZ的博客园">
-<meta property="og:description" content="不值一提的普通人">
+<meta property="og:description" content="前面给出的哪些解决Redis缓存问题的方法里面，在一个业务系统里面有可能会在多出地方使用到相同或者类似的操作，就需要反复去创建这些方法。既然业务内容操作差不多，那么我们是否可以把这些类给封装成一个适合多种场景的工具类呢？显然，这里就是想要探讨这个问题。可以把一些重复出现的方法封装起来，定义好需要传入哪些参数，等到需要使用的时候，就按要求传入这些方法需要的参数就可以实现这个功能。 下面是对缓存穿透、">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-25T11:59:53.000Z">
+<meta property="article:modified_time" content="2023-08-25T13:21:51.245Z">
 <meta property="article:author" content="Long HY">
+<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
@@ -170,36 +173,83 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-Redis缓存工具类封装" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      Redis缓存工具类封装
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/25/Redis%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B0%81%E8%A3%85/" class="archive-article-date">
+
+        
+        <a href="/2023/08/25/Redis%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B0%81%E8%A3%85/" class="archive-article-date">
   	<time datetime="2023-08-25T11:59:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-25</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/25/Redis%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B0%81%E8%A3%85/">Redis缓存工具类封装</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
+        <!-- 需要添加的位置 -->
+          <!-- 开始添加字数统计-->
           
+            
+<div style="margin-top:10px;" class="word_count">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">2.5k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">10分</span>
+      </span>
+    </span>
+</div>
+
+            
+          <!-- 添加完成 -->
+          
+          
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+            
+
+        
+
+        <p>前面给出的哪些解决Redis缓存问题的方法里面，在一个业务系统里面有可能会在多出地方使用到相同或者类似的操作，就需要反复去创建这些方法。既然业务内容操作差不多，那么我们是否可以把这些类给封装成一个适合多种场景的工具类呢？显然，这里就是想要探讨这个问题。可以把一些重复出现的方法封装起来，定义好需要传入哪些参数，等到需要使用的时候，就按要求传入这些方法需要的参数就可以实现这个功能。</p>
+<p>下面是对缓存穿透、缓存击穿的封装。</p>
+<p>首先先创建一个工具类，加上<code>@Component</code>的注释，并且定义好基础方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">@Slf4j</span><br><span class="line">@Component</span><br><span class="line">public class CacheClient &#123;</span><br><span class="line">    // springboot 版本2.7.0以上这里可能会报红线，但不影响使用，可降版本2.7.0以下消除</span><br><span class="line">    private final StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    public CacheClient(StringRedisTemplate stringRedisTemplate) &#123;</span><br><span class="line">        this.stringRedisTemplate = stringRedisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取互斥锁</span><br><span class="line">     *</span><br><span class="line">     * @param mutexKey 店铺key</span><br><span class="line">     * @return 是否获取成功</span><br><span class="line">     */</span><br><span class="line">    private boolean tryLock(String mutexKey) &#123;</span><br><span class="line">        if (stringRedisTemplate.opsForValue().get(mutexKey) != null)&#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        Boolean flag = stringRedisTemplate.opsForValue()</span><br><span class="line">        	.setIfAbsent(mutexKey, &quot;mutex&quot;, LOCK_SHOP_TTL, TimeUnit.SECONDS);</span><br><span class="line">        return BooleanUtil.isTrue(flag);</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 释放互斥锁</span><br><span class="line">     *</span><br><span class="line">     * @param mutexKey 店铺key</span><br><span class="line">     */</span><br><span class="line">    private void unlock(String mutexKey) &#123;</span><br><span class="line">        stringRedisTemplate.delete(mutexKey);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 创建自定义线程池</span><br><span class="line">    ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(</span><br><span class="line">            3,  // 核心线程数量，不能小于0</span><br><span class="line">            6,  // 最大线程数量，&gt;= 核心线程数量</span><br><span class="line">            60,  // 临时线程存活时间</span><br><span class="line">            TimeUnit.SECONDS,  // 临时线程存活时间的单位</span><br><span class="line">            new ArrayBlockingQueue&lt;&gt;(3),  // 等待任务队列的长度</span><br><span class="line">            Executors.defaultThreadFactory(),  // 创建线程工厂</span><br><span class="line">            new ThreadPoolExecutor.AbortPolicy()  // 拒绝任务的策略</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>获取锁的方法可以使用Redisson的方式来获取，详细可以参考上一篇“Redis解决缓存击穿的文章”。</strong></p>
+<h5 id="1、封装存储Redis缓存的方法："><a href="#1、封装存储Redis缓存的方法：" class="headerlink" title="1、封装存储Redis缓存的方法："></a>1、封装存储Redis缓存的方法：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    *  封装存储redis缓存</span><br><span class="line">    * @param key  存储 redis的 key</span><br><span class="line">    * @param value 数据库查询信息</span><br><span class="line">    * @param time 过期时间</span><br><span class="line">    * @param timeUnit  时间单位</span><br><span class="line">    */</span><br><span class="line">   public void set(String key, Object value, Long time, TimeUnit timeUnit)&#123;</span><br><span class="line">       stringRedisTemplate.opsForValue()</span><br><span class="line">       	.set(key, JSONUtil.toJsonStr(value), time, timeUnit);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   /**</span><br><span class="line">    * 封装逻辑过期存储redis缓存</span><br><span class="line">    * @param key  存储 redis的 key</span><br><span class="line">    * @param value 数据库查询信息</span><br><span class="line">    * @param time 过期时间</span><br><span class="line">    * @param timeUnit  时间单位</span><br><span class="line">    */</span><br><span class="line">   public void setLogicalExpire(String key, Object value, Long time, TimeUnit timeUnit)&#123;</span><br><span class="line">       // 封装成一个RedisData对象，设置逻辑过期时间</span><br><span class="line">       RedisData redisData = new RedisData();</span><br><span class="line">       redisData.setData(value);</span><br><span class="line">       redisData.setExpireTime(LocalDateTime.now()</span><br><span class="line">       	.plusSeconds(timeUnit.toSeconds(time)));</span><br><span class="line">       // 写入 Redis</span><br><span class="line">       stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(redisData));</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>封装的方法里面，需要注意的是，<code>value</code>指的是从数据库查询到的数据，需要使用的时候，需要传入业务的key、数据和自定义的时间及时间的单位，就可以使用了。</strong></p>
+<h5 id="2、封装解决缓存穿透方法："><a href="#2、封装解决缓存穿透方法：" class="headerlink" title="2、封装解决缓存穿透方法："></a>2、封装解决缓存穿透方法：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * 作用： 解决缓存穿透问题</span><br><span class="line">    * @param id 主键 id</span><br><span class="line">    * @param type 实体类的类型</span><br><span class="line">    * @param prefixKey redis 缓存的key前缀</span><br><span class="line">    * @param dbFallBack 数据库操作结果</span><br><span class="line">    * @param time 过期时间</span><br><span class="line">    * @param timeUnit 时间单位</span><br><span class="line">    * @param &lt;R&gt;  实体类名称</span><br><span class="line">    * @param &lt;ID&gt;  实体类的主键id</span><br><span class="line">    * @return 实体类的数据信息</span><br><span class="line">    */</span><br><span class="line"></span><br><span class="line">   public &lt;R, ID&gt; R shopWithCacheThrough(</span><br><span class="line">           ID id, Class&lt;R&gt; type, String prefixKey, Function&lt;ID, R&gt; dbFallBack, Long time, TimeUnit timeUnit) &#123;</span><br><span class="line">       String key = prefixKey + id;</span><br><span class="line">       // 1. 根据提交的 id 从 Redis 中查询商铺缓存信息(可以直接操作Hash，就不用转换Json了)</span><br><span class="line">       String typeJson = stringRedisTemplate.opsForValue().get(key);</span><br><span class="line">       // 2. 判断缓存中是否存在商铺信息</span><br><span class="line">       if (StrUtil.isNotBlank(typeJson)) &#123;</span><br><span class="line">           // 3. 存在，则返回商铺信息</span><br><span class="line">           return JSONUtil.toBean(typeJson, type);</span><br><span class="line">       &#125;</span><br><span class="line">       // 判断是否命中空值</span><br><span class="line">       if (typeJson != null) &#123;    // 等价于 shopMsg == &quot;&quot;，上面已经判断过 null 的情况</span><br><span class="line">           // 返回错误信息</span><br><span class="line">           return null;</span><br><span class="line">       &#125;</span><br><span class="line">       // 4. 不存在，根据id查询数据库</span><br><span class="line">       R r = dbFallBack.apply(id);</span><br><span class="line">       // 4.1 商铺不存在，返回错误码404</span><br><span class="line">       if (r == null) &#123;</span><br><span class="line">           // 不存在，设置一个空值，防止缓存穿透</span><br><span class="line">           stringRedisTemplate.opsForValue().set(key, &quot;&quot;, time, TimeUnit.SECONDS);</span><br><span class="line">           // 返回错误信息</span><br><span class="line">           return null;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       // 4.2 商铺存在，即将商铺信息写入到redis中（设置过期时间）</span><br><span class="line">       stringRedisTemplate.opsForValue()</span><br><span class="line">       	.set(key, JSONUtil.toJsonStr(r), time, timeUnit);</span><br><span class="line">       // 5. 返回商铺信息</span><br><span class="line">       return r;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>这里的“R“是泛型，因为不知道使用的业务类型，就使用泛型来替代，<code>Class&lt;R&gt; type</code>来定义需要传入的类，使用的时候再传入相应的类，使用<code>type</code>来表示<code>XX.class</code>。”ID”这个泛型定义是因为<code>id</code>这个属性不固定参数类型，所以也由调用者自己传入。Function&lt;T, R&gt;是JDK8引入的一个函数式接口，它用于封装一个具有一个输入参数和一个返回结果的函数，它提供了一种间接的方式来表示函数式编程中的函数。Function接口定义了一个抽象方法 apply()，该方法接收一个参数并返回一个结果，正好与我们的查询数据库业务相同，可以使用这个间接的方式来返回查询结果。调用的时候使用<code>dbFallBack.apply(args)</code>返回查询后的数据。</strong></p>
+<p>后面的方法也是基于这一思想来实现。</p>
+<h5 id="3、封装基于逻辑过期解决缓存击穿方法："><a href="#3、封装基于逻辑过期解决缓存击穿方法：" class="headerlink" title="3、封装基于逻辑过期解决缓存击穿方法："></a>3、封装基于逻辑过期解决缓存击穿方法：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 基于逻辑过期解决缓存击穿优化</span><br><span class="line">     * @param id 主键 id</span><br><span class="line">     * @param type 实体类的类型</span><br><span class="line">     * @param prefixKey redis 缓存的key前缀</span><br><span class="line">     * @param prefixLockKey  互斥锁key前缀</span><br><span class="line">     * @param dbFallBack 数据库操作结果</span><br><span class="line">     * @param time 过期时间</span><br><span class="line">     * @param timeUnit 时间单位</span><br><span class="line">     * @param &lt;R&gt;  实体类名称</span><br><span class="line">     * @param &lt;ID&gt;  实体类的主键id</span><br><span class="line">     * @return 实体类的数据信息</span><br><span class="line">     */</span><br><span class="line">    public &lt;R, ID&gt; R queryWithLogicalExpire(</span><br><span class="line">            ID id, Class&lt;R&gt; type, String prefixKey, String prefixLockKey, Function&lt;ID, R&gt; dbFallBack, Long time, TimeUnit timeUnit) &#123;</span><br><span class="line">        String key = prefixKey + id;</span><br><span class="line">        // 1. 根据提交的 id 从 Redis 中查询商铺缓存信息(可以直接操作Hash，就不用转换Json了)</span><br><span class="line">        String json = stringRedisTemplate.opsForValue().get(key);</span><br><span class="line">        // 2. 判断缓存中是否存在商铺信息</span><br><span class="line">        if (StrUtil.isBlank(json)) &#123;</span><br><span class="line">            // 3. 未命中。不存在，则返回空值</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        // 4. 缓存命中，把json反序列化成对象</span><br><span class="line">        RedisData redisData = JSONUtil.toBean(json, RedisData.class);</span><br><span class="line">        R r = JSONUtil.toBean((JSONObject) redisData.getData(), type);</span><br><span class="line">        // 4.1 判断缓存是否过期</span><br><span class="line">        if (redisData.getExpireTime().isAfter(LocalDateTime.now())) &#123;</span><br><span class="line">            // 5. 缓存未过期，返回店铺信息</span><br><span class="line">            return r;</span><br><span class="line">        &#125;</span><br><span class="line">        // 6. 缓存过期，尝试获取互斥锁</span><br><span class="line">        String mutexKey = prefixLockKey + id;</span><br><span class="line">        boolean isLock = tryLock(mutexKey);</span><br><span class="line">        // 6.1 获取锁成功，开启独立线程，实现缓存重建</span><br><span class="line">        if (isLock)&#123;</span><br><span class="line">            poolExecutor.submit(() -&gt;&#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 6.2 把查询的商铺信息写到 Redis，并设置逻辑过期时间</span><br><span class="line">                    R r1 = dbFallBack.apply(id);</span><br><span class="line">                    this.setLogicalExpire(key, r1, time, timeUnit);</span><br><span class="line">                &#125; catch (Exception e) &#123;</span><br><span class="line">                    throw new RuntimeException(e);</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    // 7. 释放互斥锁</span><br><span class="line">                    unlock(mutexKey);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        // 8. 返回商铺信息</span><br><span class="line">        return r;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>思想与前面的相同，设置好需要传入的参数就好。</strong></p>
+<h5 id="4、封装基于互斥锁解决缓存击穿问题："><a href="#4、封装基于互斥锁解决缓存击穿问题：" class="headerlink" title="4、封装基于互斥锁解决缓存击穿问题："></a>4、封装基于互斥锁解决缓存击穿问题：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     *</span><br><span class="line">     * 作用： 用互斥锁解决缓冲击穿问题</span><br><span class="line">     * @param id 主键 id</span><br><span class="line">     * @param type 实体类的类型</span><br><span class="line">     * @param prefixKey redis 缓存的key前缀</span><br><span class="line">     * @param prefixLockKey  互斥锁key前缀</span><br><span class="line">     * @param dbFallBack 数据库操作结果</span><br><span class="line">     * @param time 过期时间</span><br><span class="line">     * @param timeUnit 时间单位</span><br><span class="line">     * @param &lt;R&gt;  实体类名称</span><br><span class="line">     * @param &lt;ID&gt;  实体类的主键id</span><br><span class="line">     * @return 实体类的数据信息</span><br><span class="line">     */</span><br><span class="line">    public &lt;R, ID&gt; R queryWithMutex(</span><br><span class="line">            ID id, Class&lt;R&gt; type, String prefixKey, String prefixLockKey, Function&lt;ID, R&gt; dbFallBack, Long time, TimeUnit timeUnit) &#123;</span><br><span class="line">        String key = prefixKey + id;</span><br><span class="line">        // 1. 根据提交的 id 从 Redis 中查询商铺缓存信息(可以直接操作Hash，就不用转换Json了)</span><br><span class="line">        String json = stringRedisTemplate.opsForValue().get(key);</span><br><span class="line">        // 2. 判断缓存中是否存在商铺信息</span><br><span class="line">        if (StrUtil.isNotBlank(json)) &#123;</span><br><span class="line">            // 3. 存在，则返回商铺信息</span><br><span class="line">            return JSONUtil.toBean(json, type);</span><br><span class="line">        &#125;</span><br><span class="line">        // 判断是否命中空值</span><br><span class="line">        if (json != null) &#123;    // 等价于 json == &quot;&quot;，上面已经判断过 null 的情况</span><br><span class="line">            // 放行，让缓存击穿优化</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        // 4. 缓存未命中</span><br><span class="line">        // 4.1 实现缓存重建，获取互斥锁</span><br><span class="line">        // 商铺的互斥锁 key</span><br><span class="line">        String mutexKey = prefixLockKey + id;</span><br><span class="line">        R r = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            // 4.2 判断是否获取锁成功</span><br><span class="line">            boolean flag = tryLock(mutexKey);</span><br><span class="line">            while (!flag) &#123;</span><br><span class="line">                // 4.3 获取锁失败，等待一会继续重试</span><br><span class="line">                Thread.sleep(50);</span><br><span class="line">                flag = tryLock(mutexKey);</span><br><span class="line">            &#125;</span><br><span class="line">            // 4.4 拿到互斥锁后，再次判断是否有别的线程已经把缓存写入</span><br><span class="line">            String ObjJson = stringRedisTemplate.opsForValue().get(key);</span><br><span class="line">            // 4.5 判断缓存中是否存在商铺信息</span><br><span class="line">            if (StrUtil.isNotBlank(ObjJson)) &#123;</span><br><span class="line">                // 4.6 存在，则返回商铺信息</span><br><span class="line">                return JSONUtil.toBean(ObjJson, type);</span><br><span class="line">            &#125;</span><br><span class="line">            /*if (!flag) &#123;  // 可以用递归替代前面的代码，但是用递归不好，所以选用循环了</span><br><span class="line">                // 4.3 获取锁失败，等待一会继续重试</span><br><span class="line">                Thread.sleep(50);</span><br><span class="line">                return queryWithMutex(id);</span><br><span class="line">            &#125;*/</span><br><span class="line">            // 4.7. 不存在，根据id查询数据库</span><br><span class="line">            r = dbFallBack.apply(id);</span><br><span class="line">            // 测试： 模拟一下重建缓存延时情况，考察功能的可靠性</span><br><span class="line">            //Thread.sleep(200);</span><br><span class="line">            // 5. 商铺不存在，返回错误码404</span><br><span class="line">            if (r == null) &#123;</span><br><span class="line">                // 不存在，往redis缓存写入一个空值，防止缓存穿透</span><br><span class="line">                stringRedisTemplate.opsForValue().set(key, &quot;&quot;, time, TimeUnit.SECONDS);</span><br><span class="line">                // 放行，让缓存击穿优化</span><br><span class="line">                return null;</span><br><span class="line">            &#125;</span><br><span class="line">            // 6 商铺存在，即将商铺信息写入到redis中（设置过期时间）</span><br><span class="line">            stringRedisTemplate.opsForValue()</span><br><span class="line">            	.set(key, JSONUtil.toJsonStr(r), time, timeUnit);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            // 抛出异常</span><br><span class="line">            throw new RuntimeException(e);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            // 7. 释放互斥锁</span><br><span class="line">            unlock(mutexKey);</span><br><span class="line">        &#125;</span><br><span class="line">        // 8. 返回商铺信息</span><br><span class="line">        return r;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>封装好这些方法后，就可以直接调用这些方法了，而在实现类中，就不需要写那么多繁琐的代码了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    *  缓存工具类封装</span><br><span class="line">    */</span><br><span class="line">   @Resource</span><br><span class="line">   private CacheClient cacheClient;</span><br><span class="line">   </span><br><span class="line">   @Override</span><br><span class="line">   public Result QueryRedisById(Long id) &#123;</span><br><span class="line">       // 缓冲穿透</span><br><span class="line">       /*Shop shop = cacheClient.shopWithCacheThrough(</span><br><span class="line">               id, Shop.class, CACHE_SHOP_KEY, this::getById, CACHE_SHOP_TTL, TimeUnit.MINUTES);*/</span><br><span class="line">       // 互斥锁解决缓冲击穿</span><br><span class="line">       Shop shop = cacheClient.queryWithMutex(</span><br><span class="line">               id, Shop.class, CACHE_SHOP_KEY, LOCK_SHOP_KEY, this::getById, CACHE_SHOP_TTL, TimeUnit.MINUTES);</span><br><span class="line"></span><br><span class="line">       // 基于逻辑过期解决缓存击穿问题</span><br><span class="line">       /*Shop shop = cacheClient.queryWithLogicalExpire(</span><br><span class="line">               id, Shop.class, CACHE_SHOP_KEY, LOCK_SHOP_KEY, this::getById, CACHE_SHOP_TTL, TimeUnit.SECONDS);*/</span><br><span class="line"></span><br><span class="line">       // 店铺不存在</span><br><span class="line">       if (shop == null) &#123;</span><br><span class="line">           return Result.fail(&quot;商铺不存在！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 返回商铺信息</span><br><span class="line">       return Result.ok(shop);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>封装好缓存工具类后，直接使用方法调用的方式来调用，会有一种极致简洁的效果，没有那么多冗余的代码了。</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -211,209 +261,56 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2023-08-24T03:29:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-24</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Redis 缓存击穿问题及解决方法</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">Redis 缓存击穿问题及解决方法</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2023-08-23T06:26:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-23</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">Redis缓存穿透问题及解决方法</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2023-08-22T04:30:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/">基于Redis实现共享Session登录</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2023-08-20T04:08:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/">序列化过程中版本号不一致的问题</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/" class="archive-article-date">
-  	<time datetime="2023-08-16T06:37:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-16</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/">对System.out.println()这个打印语句的认识</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -436,9 +333,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
