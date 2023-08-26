@@ -8,16 +8,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | LongZ的博客园</title>
+  <title>Redis高并发场景:商品秒杀活动 | LongZ的博客园</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="不值一提的普通人">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LongZ的博客园">
-<meta property="og:url" content="http://example.com/archives/index.html">
+  <meta name="description" content="要说Redis高并发场景，有一个很典型的场景就是商品秒杀。而在实际开发的过程中，会有各种各样的问题发生，比如：如何保证订单的唯一性、超卖问题、一人一单等问题，以及这些问题在集群模式下也能够正常运行等问题。下面是解决这些问题的方法。由于篇幅问题，会分成几个主题来写。 1、全局唯一ID生成策略：全局ID生成器，是一种在分布式系统下用来生成全局唯一ID的工具，一般要求满足：唯一性、高性能、高可用、安全性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis高并发场景:商品秒杀活动">
+<meta property="og:url" content="http://example.com/2023/08/26/Redis%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF-%E5%95%86%E5%93%81%E7%A7%92%E6%9D%80%E6%B4%BB%E5%8A%A8/index.html">
 <meta property="og:site_name" content="LongZ的博客园">
-<meta property="og:description" content="不值一提的普通人">
+<meta property="og:description" content="要说Redis高并发场景，有一个很典型的场景就是商品秒杀。而在实际开发的过程中，会有各种各样的问题发生，比如：如何保证订单的唯一性、超卖问题、一人一单等问题，以及这些问题在集群模式下也能够正常运行等问题。下面是解决这些问题的方法。由于篇幅问题，会分成几个主题来写。 1、全局唯一ID生成策略：全局ID生成器，是一种在分布式系统下用来生成全局唯一ID的工具，一般要求满足：唯一性、高性能、高可用、安全性">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-26T12:37:47.000Z">
+<meta property="article:modified_time" content="2023-08-26T13:34:52.779Z">
 <meta property="article:author" content="Long HY">
+<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
@@ -176,36 +179,113 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-Redis高并发场景-商品秒杀活动" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      Redis高并发场景:商品秒杀活动
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/26/Redis%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF-%E5%95%86%E5%93%81%E7%A7%92%E6%9D%80%E6%B4%BB%E5%8A%A8/" class="archive-article-date">
+
+        
+        <a href="/2023/08/26/Redis%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF-%E5%95%86%E5%93%81%E7%A7%92%E6%9D%80%E6%B4%BB%E5%8A%A8/" class="archive-article-date">
   	<time datetime="2023-08-26T12:37:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-26</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/26/Redis%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF-%E5%95%86%E5%93%81%E7%A7%92%E6%9D%80%E6%B4%BB%E5%8A%A8/">Redis高并发场景:商品秒杀活动</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
+        <!-- 需要添加的位置 -->
+          <!-- 开始添加字数统计-->
           
+            
+<div style="margin-top:10px;" class="word_count">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">3.3k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">13分</span>
+      </span>
+    </span>
+</div>
+
+            
+          <!-- 添加完成 -->
+          
+          
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+            
+
+        
+
+        <p>要说Redis高并发场景，有一个很典型的场景就是商品秒杀。而在实际开发的过程中，会有各种各样的问题发生，比如：如何保证订单的唯一性、超卖问题、一人一单等问题，以及这些问题在集群模式下也能够正常运行等问题。下面是解决这些问题的方法。由于篇幅问题，会分成几个主题来写。</p>
+<h5 id="1、全局唯一ID生成策略："><a href="#1、全局唯一ID生成策略：" class="headerlink" title="1、全局唯一ID生成策略："></a>1、全局唯一ID生成策略：</h5><p>全局ID生成器，是一种在分布式系统下用来生成全局唯一ID的工具，一般要求满足：唯一性、高性能、高可用、安全性和递增性。而Redis命令可以满足基本都能满足以上的要求，但是安全性需要进一步增强。比如，为了增强ID的安全性，我们可以不使用Redis自增的数值，而是拼接一些其他的信息来增强安全性。<span id="more"></span></p>
+<p>比如，我们可以把ID分成三部分，第一部分是符号位，占用一个bit位；第二部分用时间戳来表示，占用31个bit位；第三部分用序列号来代替，占用32个bit位，一个ID总共占用8个字节。</p>
+<p>ID的组成部分：</p>
+<ul>
+<li>符号位：1bit，永远位0</li>
+<li>时间戳：31bit，以秒为单位，可以使用69年</li>
+<li>序列号：32bit，秒内的计数器，支持每秒产生2^32个不同的ID</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">@Slf4j</span><br><span class="line">@Component</span><br><span class="line">public class RedisIDWorker &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 开始的时间戳</span><br><span class="line">     */</span><br><span class="line">    private static final long BEGIN_TIMESTAMP =  1672531200L;</span><br><span class="line">    /**</span><br><span class="line">     * 序列号的位数</span><br><span class="line">     */</span><br><span class="line">    private static final int COUNT_BIT = 32;</span><br><span class="line"></span><br><span class="line">    private StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    public RedisIDWorker(StringRedisTemplate stringRedisTemplate) &#123;</span><br><span class="line">        this.stringRedisTemplate = stringRedisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line">    public long nextId(String keyPrefix)&#123;</span><br><span class="line">        // 1. 生成时间戳</span><br><span class="line">        LocalDateTime now = LocalDateTime.now();</span><br><span class="line">        long nowSecond = now.toEpochSecond(ZoneOffset.UTC);</span><br><span class="line">        long timestamp = nowSecond - BEGIN_TIMESTAMP;</span><br><span class="line"></span><br><span class="line">        // 2. 生成序列号</span><br><span class="line">        // 2.1 获取当前日期</span><br><span class="line">        String date = now.format(DateTimeFormatter.ofPattern(&quot;yyyy:MM:dd&quot;));</span><br><span class="line">        // 2.2 获取生成的自增长 id</span><br><span class="line">        long count = stringRedisTemplate.opsForValue().increment(&quot;icr:&quot; + keyPrefix + &quot;:&quot; + date);</span><br><span class="line">        // 3. 拼接好并返回</span><br><span class="line">        return timestamp &lt;&lt; COUNT_BIT | count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解析一下上面这段代码：</p>
+<ol>
+<li>时间戳的生成是先生成一个当前年份开始第一天零时零分的时间戳，然后再获取生成订单这一刻的时间戳相减得到的时间值。</li>
+<li>序列号的生成是当前时间的年月日的格式化，然后通过Redis命令去调用<code>increment</code>这个方法来生成自增长的id来作为序列号。</li>
+<li>订单号的拼接是通过偏移量来计算的，因为底层是用补码进行存储，所以可以这样来进行存储。先把时间戳向左偏移32位，即右边就会空出32位（全为0），然后把时间戳新的值与序列号做或运算，就可以得到一个新的值（或运算中，只有全为0才为0，否则为1，这样计算出来的值可以保证拼接的结果无误）。</li>
+</ol>
+<p>ID的生成策略还有其他的方法，比如UUID、Redis自增、雪花算法和数据库自增（区别于一般的ID，数据库自增是独立维护一个订单表，里面有id和订单号，维护的是订单号自增）。</p>
+<h5 id="2、超卖问题解决方法："><a href="#2、超卖问题解决方法：" class="headerlink" title="2、超卖问题解决方法："></a>2、超卖问题解决方法：</h5><p>超卖问题是高并发下，在某一时刻，有多个线程同时对数据库库存的值（这个值相同）进行减法操作，导致库存出现负数的情况。针对这一问题，常见的解决方法就是给这个操作上一把锁，如悲观锁和乐观锁：</p>
+<p>（1）、悲观锁：</p>
+<p>悲观锁总是认为线程安全问题一定会发生，因此在操作数据之前先获取锁，确保线程串行执行。例如Synchronized和Lock都属于悲观锁。</p>
+<p>（2）、乐观锁：</p>
+<p>乐观锁认为线程安全问题不一定会发生，因此不加锁，只有在更新数据时判断有没有其他线程对数据做了修改。如果没有修改则认为是安全的，自己才更新数据；如果已经被其他线程修改说明发生了线程安全问题，此时可以重试或者报异常。</p>
+<p>悲观锁在高并发场景下并不适用，所以下面是基于乐观锁的方式进行解决的，这里给出两种解决方法，分别是版本号法和CSA法。</p>
+<h6 id="版本号法："><a href="#版本号法：" class="headerlink" title="版本号法："></a>版本号法：</h6><p>基于版本号法来解决超卖问题：</p>
+<p>在Mybatis-Plus中，提供了一个关键字<code>@Version</code>来维护版本号，需要在数据库创建<code>version</code>字段，在实体类的属性中找到这个字段并加上<code>@Version</code>注释。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 标识版本号乐观锁字段</span><br><span class="line">@Version  </span><br><span class="line">private Integer version;</span><br></pre></td></tr></table></figure>
+
+<p>编写配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">// 扫描 Mybatis 配置文件</span><br><span class="line">@MapperScan(&quot;xxx.mapper&quot;)</span><br><span class="line">public class MyBatisPlusConfig &#123;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    public MybatisPlusInterceptor mybatisPlusInterceptor()&#123;</span><br><span class="line">        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();</span><br><span class="line">        // 配置分页插件；细节： 因为不同数据库的分页策略不一样，所以在定义插件时就要定义好数据库类型</span><br><span class="line">        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));</span><br><span class="line">        // 配置乐观锁插件</span><br><span class="line">        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());</span><br><span class="line">        return interceptor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每次修改前都会先查询版本号，如果版本号一致才允许修改，每次修改成功都会把版本号做加一操作（version &#x3D; version + 1）。如果版本号不一致，就不允许修改，保证数据安全。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">@Transactional  </span><br><span class="line">   public Result seckillVoucher(Long voucherId) &#123;</span><br><span class="line">       // 1. 根据id查询优惠券信息</span><br><span class="line">       SeckillVoucher seckillVoucher = seckillVoucherService.getById(voucherId);</span><br><span class="line">       // 2. 判断秒杀是否开始</span><br><span class="line">       // 2.1 秒杀是否已经开始</span><br><span class="line">       if (seckillVoucher.getBeginTime().isAfter(LocalDateTime.now())) &#123;</span><br><span class="line">           return Result.fail(&quot;秒杀尚未开始！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 2.2 秒杀是否已经结束</span><br><span class="line">       if (seckillVoucher.getEndTime().isBefore(LocalDateTime.now())) &#123;</span><br><span class="line">           return Result.fail(&quot;秒杀已经结束！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 3. 判断库存是否充足</span><br><span class="line">       if (seckillVoucher.getStock() &lt; 1) &#123;</span><br><span class="line">           return Result.fail(&quot;库存不足！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 4. 秒杀抢券，扣减库存</span><br><span class="line">       boolean success = seckillVoucherService.update()</span><br><span class="line">               .setSql(&quot;stock = stock - 1&quot;)</span><br><span class="line">               .eq(&quot;voucher_id&quot;, voucherId).update();</span><br><span class="line">       // 4.1 扣除失败，说明已经抢完了</span><br><span class="line">       if (!success) &#123;</span><br><span class="line">           return Result.fail(&quot;库存不足！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 5. 创建订单</span><br><span class="line">       VoucherOrder voucherOrder = new VoucherOrder();</span><br><span class="line">       long orderId = redisIDWorker.nextId(&quot;seckill:order:&quot;);</span><br><span class="line">       // 5.1 生成订单id</span><br><span class="line">       voucherOrder.setId(orderId);</span><br><span class="line">       // 5.2 记录用户的id</span><br><span class="line">       voucherOrder.setUserId(UserHolder.getUser().getId());</span><br><span class="line">       // 5.3 记录抢购的优惠券id</span><br><span class="line">       voucherOrder.setVoucherId(voucherId);</span><br><span class="line">       // 5.4 把生成的订单信息存储到数据库</span><br><span class="line">       save(voucherOrder);</span><br><span class="line"></span><br><span class="line">       // 6. 返回订单号</span><br><span class="line">       return Result.ok(orderId);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在SQL语句中，where后面的判断条件，如果version和数据库保持一致才能执行成功，如果不一致就执行失败，事务回滚。</p>
+<h6 id="CSA法："><a href="#CSA法：" class="headerlink" title="CSA法："></a>CSA法：</h6><p>既然每次修改数据都是先判断库存是否充足的，那么就可以利用库存来作为一个类似于版本号的左右，判断库存是否和查询到的值是一致的，只有一致的才允许扣库存。但是这也有一个弊端，那就是高并发的情况下，如果其他的线程扣减库存成功，此时数据库库存减一，而等到我执行的时候，库存值不一样了，但是库存的数量还有余量，依旧会秒杀失败。这样执行的效果就是，高并发情况下，明明库存充足，就是下单失败。因此，基于这个思想，我们可以稍作改变，就是判断库存是否一致改为库存是否大于0作为判断标准，只要大于0就允许购买，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   @Transactional</span><br><span class="line">   public Result seckillVoucher(Long voucherId) &#123;</span><br><span class="line">       // 1. 根据id查询优惠券信息</span><br><span class="line">       SeckillVoucher seckillVoucher = seckillVoucherService.getById(voucherId);</span><br><span class="line">       // 2. 判断秒杀是否开始</span><br><span class="line">       // 2.1 秒杀是否已经开始</span><br><span class="line">       if (seckillVoucher.getBeginTime().isAfter(LocalDateTime.now())) &#123;</span><br><span class="line">           return Result.fail(&quot;秒杀尚未开始！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 2.2 秒杀是否已经结束</span><br><span class="line">       if (seckillVoucher.getEndTime().isBefore(LocalDateTime.now())) &#123;</span><br><span class="line">           return Result.fail(&quot;秒杀已经结束！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 3. 判断库存是否充足</span><br><span class="line">       if (seckillVoucher.getStock() &lt; 1) &#123;</span><br><span class="line">           return Result.fail(&quot;库存不足！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 4. 秒杀抢券，扣减库存</span><br><span class="line">       boolean success = seckillVoucherService.update()</span><br><span class="line">               .setSql(&quot;stock = stock - 1&quot;)</span><br><span class="line">               .eq(&quot;voucher_id&quot;, voucherId)</span><br><span class="line">               //.eq(&quot;stock&quot;, seckillVoucher.getStock())//如果stock一样，即便有库存也不能下单</span><br><span class="line">               .gt(&quot;stock&quot;, 0)// 把 stock换成只要大于0就还能卖</span><br><span class="line">               .update();</span><br><span class="line">       // 4.1 扣除失败，说明已经抢完了</span><br><span class="line">       if (!success) &#123;</span><br><span class="line">           return Result.fail(&quot;库存不足！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 5. 创建订单</span><br><span class="line">       VoucherOrder voucherOrder = new VoucherOrder();</span><br><span class="line">       long orderId = redisIDWorker.nextId(&quot;seckill:order:&quot;);</span><br><span class="line">       // 5.1 生成订单id</span><br><span class="line">       voucherOrder.setId(orderId);</span><br><span class="line">       // 5.2 记录用户的id</span><br><span class="line">       voucherOrder.setUserId(UserHolder.getUser().getId());</span><br><span class="line">       // 5.3 记录抢购的优惠券id</span><br><span class="line">       voucherOrder.setVoucherId(voucherId);</span><br><span class="line">       // 5.4 把生成的订单信息存储到数据库</span><br><span class="line">       save(voucherOrder);</span><br><span class="line"></span><br><span class="line">       // 6. 返回订单号</span><br><span class="line">       return Result.ok(orderId);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结起来就是，乐观锁高并发下性能好，但是可能存在成功率低的问题。</p>
+<h5 id="3、一人一单问题："><a href="#3、一人一单问题：" class="headerlink" title="3、一人一单问题："></a>3、一人一单问题：</h5><p>一般来说，秒杀活动都是商家的特惠活动，是为了吸引流量的，那么一个用户应当只允许购买一次才符合秒杀的逻辑，所以下面是解决一人一单这个问题，同一个用户每次秒杀只能参与一次，重复参与就提醒用户不能重复参与。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public Result seckillVoucher(Long voucherId) &#123;</span><br><span class="line">       // 1. 根据id查询优惠券信息</span><br><span class="line">       SeckillVoucher seckillVoucher = seckillVoucherService.getById(voucherId);</span><br><span class="line">       // 2. 判断秒杀是否开始</span><br><span class="line">       // 2.1 秒杀是否已经开始</span><br><span class="line">       if (seckillVoucher.getBeginTime().isAfter(LocalDateTime.now())) &#123;</span><br><span class="line">           return Result.fail(&quot;秒杀尚未开始！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 2.2 秒杀是否已经结束</span><br><span class="line">       if (seckillVoucher.getEndTime().isBefore(LocalDateTime.now())) &#123;</span><br><span class="line">           return Result.fail(&quot;秒杀已经结束！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 3. 判断库存是否充足</span><br><span class="line">       if (seckillVoucher.getStock() &lt; 1) &#123;</span><br><span class="line">           return Result.fail(&quot;库存不足！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       Long userId = UserHolder.getUser().getId();</span><br><span class="line">       // intern： 返回常量池中这个常量的地址值</span><br><span class="line">       synchronized (userId.toString().intern()) &#123;</span><br><span class="line">           // 获取代理对象（事务）</span><br><span class="line">           IVoucherOrderService proxy = (IVoucherOrderService) AopContext.currentProxy();</span><br><span class="line">           return proxy.createVoucherOrder(userId, voucherId);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   @Transactional </span><br><span class="line">   public Result createVoucherOrder (Long userId, Long voucherId)&#123;</span><br><span class="line">       // 4. 判断用户是否已经抢购过，如果抢购过就拒绝继续抢购</span><br><span class="line">       int count = query().eq(&quot;user_id&quot;, userId).eq(&quot;voucher_id&quot;, voucherId).count();</span><br><span class="line">       if (count &gt; 0) &#123;</span><br><span class="line">           return Result.fail(&quot;每个用户只能抢购一次哦！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 5. 秒杀抢券，扣减库存</span><br><span class="line">       boolean success = seckillVoucherService.update()</span><br><span class="line">               .setSql(&quot;stock = stock - 1&quot;)</span><br><span class="line">               .eq(&quot;voucher_id&quot;, voucherId)</span><br><span class="line">               //.eq(&quot;stock&quot;, seckillVoucher.getStock()) // 有一些问题</span><br><span class="line">               .gt(&quot;stock&quot;, 0).update();</span><br><span class="line">       // 5.1 扣除失败，说明已经抢完了</span><br><span class="line">       if (!success) &#123;</span><br><span class="line">           return Result.fail(&quot;库存不足！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 6. 创建订单</span><br><span class="line">       VoucherOrder voucherOrder = new VoucherOrder();</span><br><span class="line">       long orderId = redisIDWorker.nextId(&quot;seckill:order:&quot;);</span><br><span class="line">       // 6.1 生成订单id</span><br><span class="line">       voucherOrder.setId(orderId);</span><br><span class="line">       // 6.2 记录用户的id</span><br><span class="line">       voucherOrder.setUserId(userId);</span><br><span class="line">       // 6.3 记录抢购的优惠券id</span><br><span class="line">       voucherOrder.setVoucherId(voucherId);</span><br><span class="line">       // 6.4 把生成的订单信息存储到数据库</span><br><span class="line">       save(voucherOrder);</span><br><span class="line">       </span><br><span class="line">       // 7. 返回订单号</span><br><span class="line">       return Result.ok(orderId); </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>一人一单问题这里使用的是悲观锁的方法，可以在创建订单的方法上的返回值前加上<code>synchronized</code>关键字来把整个方法上锁，但是这样的作用范围是整个实现类，这样锁的粒度太大了，一旦并发量大，很容易造成卡顿；这里的优化方法是使用用户id这个字段作为一把锁，使用<code>intern</code>方法可以对这个用户id进行规范化返回（返回的是用户id的地址值，判断结果只有地址值一致才为true），但是由于开启事务的方法是创建订单，这时候会造成事务不生效的问题，可以使用Aspectj拿到当前类的代理，调用AopContext.currentProxy()拿到代理权（需要强转成当前的实现类），然后代理调用创建订单方法才能保证事务的一致性。</strong></p>
+<p>需要先导入Aspectj依赖，然后去启动类中暴露代理权。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.aspectj&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;aspectjweaver&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@EnableAspectJAutoProxy(exposeProxy = true)</span><br></pre></td></tr></table></figure>
+
+<p><code>exposeProxy</code>默认为false，官网上也不建议使用这种方法，因为代理对象的生命周期和目标对象的生命周期是不同的，存在不稳定性，而且也会存在有安全风险和性能问题。</p>
+<p>一人一单问题在单体服务器上，是可以保证一致性的，但是在集群模式下，并不能保证一人一单。</p>
+<p><strong>之前是因为单体服务器，JVM内部维护了锁监视器，当线程1获取到锁之后，就会在常量池中的锁监视器里面去维护线程1这个变量，当其他线程想要获取锁的时候，锁监视器里面已经存在一把锁了，那么其他的线程也就无法去获取到锁，只能等待这个线程去主动释放锁，其他的线程才能获取锁。但是集群的时候，就会存在多个JVM，这个时候，它们维护的都是各自的锁监视器（JVM是根据锁监视器来控制线程的，互斥），所以在其他的集群的JVM的线程也可以拿到这把锁（不同的tomcat不同的锁），那么在并发的情况下，它们在数据库查到的<code>count</code>值都是0，所以都可以创建一个订单去返回。利用分布式锁可以解决这个问题。</strong></p>
+<p>考虑到篇幅问题，会在后一篇文章中分享。</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -217,361 +297,56 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/25/Redis%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B0%81%E8%A3%85/" class="archive-article-date">
-  	<time datetime="2023-08-25T11:59:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-25</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/08/25/Redis%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B0%81%E8%A3%85/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Redis缓存工具类封装</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/25/Redis%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%B0%81%E8%A3%85/">Redis缓存工具类封装</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2023-08-24T03:29:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/24/Redis-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">Redis 缓存击穿问题及解决方法</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2023-08-23T06:26:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-23</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">Redis缓存穿透问题及解决方法</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2023-08-22T04:30:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/">基于Redis实现共享Session登录</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" class="archive-article-date">
-  	<time datetime="2023-08-21T06:16:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/">MySQL管理中一些好用的工具</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2023-08-20T04:08:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/">序列化过程中版本号不一致的问题</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-18T07:00:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">往虚拟机的MySQL数据库插入大量数据的一种解决方案</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/" class="archive-article-date">
-  	<time datetime="2023-08-16T06:37:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-16</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/">对System.out.println()这个打印语句的认识</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-15T08:39:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">Github访问速度慢的一个解决方案</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -594,8 +369,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
