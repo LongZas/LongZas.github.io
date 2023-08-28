@@ -8,20 +8,26 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://longzas.github.io">
-  <title>基于Redis实现共享Session登录 | LongZ</title>
+  <title>Lua脚本优化分布式锁原子性问题 | LongZ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。 Se">
+  <meta name="description" content="Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，可以确保多条命令执行时的原子性。Lua是一种编程语言，它的基本语法可以参考网站：https:&#x2F;&#x2F;www.runoob.com&#x2F;lua&#x2F;lua-tutorial.html 本篇文章优化分布式锁的原子性用到的命令不多，重点介绍一下下面这个命令： 12# 执行 REdis 命令redis.call(&amp;#x27;命令名称&amp;#x27;, &amp;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于Redis实现共享Session登录">
-<meta property="og:url" content="https://longzas.github.io/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/index.html">
+<meta property="og:title" content="Lua脚本优化分布式锁原子性问题">
+<meta property="og:url" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="LongZ">
-<meta property="og:description" content="大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。 Se">
+<meta property="og:description" content="Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，可以确保多条命令执行时的原子性。Lua是一种编程语言，它的基本语法可以参考网站：https:&#x2F;&#x2F;www.runoob.com&#x2F;lua&#x2F;lua-tutorial.html 本篇文章优化分布式锁的原子性用到的命令不多，重点介绍一下下面这个命令： 12# 执行 REdis 命令redis.call(&amp;#x27;命令名称&amp;#x27;, &amp;">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-08-22T04:30:32.000Z">
-<meta property="article:modified_time" content="2023-08-22T11:15:02.762Z">
+<meta property="og:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246765867.png">
+<meta property="og:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246855466.png">
+<meta property="og:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693247007934.png">
+<meta property="og:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248389993.png">
+<meta property="og:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248497801.png">
+<meta property="article:published_time" content="2023-08-29T04:20:01.000Z">
+<meta property="article:modified_time" content="2023-08-28T19:23:40.644Z">
 <meta property="article:author" content="Long HY">
-<meta property="article:tag" content="Redis缓存">
+<meta property="article:tag" content="Redis高并发">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246765867.png">
   
     <link rel="alternative" href="/atom.xml" title="LongZ" type="application/atom+xml">
   
@@ -182,20 +188,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-基于Redis实现共享Session登录" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Lua脚本优化分布式锁原子性问题" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      基于Redis实现共享Session登录
+      Lua脚本优化分布式锁原子性问题
     </h1>
   
 
         
-        <a href="/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/" class="archive-article-date">
-  	<time datetime="2023-08-22T04:30:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-22</time>
+        <a href="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/" class="archive-article-date">
+  	<time datetime="2023-08-29T04:20:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-29</time>
 </a>
         <!-- 需要添加的位置 -->
           <!-- 开始添加字数统计-->
@@ -206,7 +212,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">1.6k字</span>
+        <span class="post-count">984字</span>
       </span>
     </span>
 
@@ -215,7 +221,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">6分</span>
+        <span class="post-count">3分</span>
       </span>
     </span>
 </div>
@@ -243,30 +249,51 @@
 
         
 
-        <p>大家都知道，Tomcat服务器并不共享 Session ，当一个项目部署在一个集群时，假设第一次路由分配给到 tomcat01，Session会保存在这台服务器上，但是短时间内当第二次访问时（可以看作是无操作，再次刷新时），被分配到tomcat02上，这台服务器的tomcat就没有Session的，这时显示前端显示未登录，这样显然是不合理的。这就叫Tomcat服务器的Session混淆问题。</p>
-<p>Session共享问题主要说的是多台Tomcat并不共享session存储空间，当请求切换到不同tomcat服务器时导致数据丢失的问题。那么久需要思考一个替代的方案了，而且这个替代方案应该满足以下三点：数据共享、内存存储、key：value结构。满足以上三点的，主流的服务器可以选择 Redis 服务器，首先时基于<strong>内存存储</strong>的，访问速度快；<strong>集群数据共享</strong>，可以解决session混淆问题；而且是key：value结构存储数据的，存取方便；并且具有各种缓存淘汰机制，不用过于担心性能问题。<span id="more"></span></p>
-<p>Spring默认提供了一个StringRedisTemplate类，它的key和value的序列化方式默认就是String方式，可以省去我们自定义RedisTemplate的过程，可以直接调用：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">private StringRedisTemplate stringRedisTemplate;</span><br></pre></td></tr></table></figure>
+        <p>Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，可以确保多条命令执行时的原子性。Lua是一种编程语言，它的基本语法可以参考网站：<a target="_blank" rel="noopener" href="https://www.runoob.com/lua/lua-tutorial.html">https://www.runoob.com/lua/lua-tutorial.html</a></p>
+<p>本篇文章优化分布式锁的原子性用到的命令不多，重点介绍一下下面这个命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行 REdis 命令</span><br><span class="line">redis.call(&#x27;命令名称&#x27;, &#x27;key&#x27;, &#x27;其他参数&#x27;, ...)</span><br></pre></td></tr></table></figure>
 
-<p>下面是基于StringRedisTemplate来实现的Session共享：</p>
-<p>一般的登录登录页面可能会用到验证码来校验，这时也可以传入session来辅助登录。</p>
-<p>下面是一个根据手机号来获取验证码登录的例子：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public Result sendCode(String phone, HttpSession session) &#123;</span><br><span class="line">       // 1. 先判断手机号有没有符合规范</span><br><span class="line">       if (RegexUtils.isPhoneInvalid(phone)) &#123;</span><br><span class="line">           // 2. 如果不符合就返回错误信息</span><br><span class="line">           return Result.fail(&quot;手机号码无效格式！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 3. 如果手机号码符合符合，就生成一个验证码</span><br><span class="line">       String code = RandomUtil.randomNumbers(6);</span><br><span class="line">       // 4. 生成的验证码保存到 redis 里面(用手机号区分)</span><br><span class="line">       stringRedisTemplate.opsForValue().set(LOGIN_CODE_KEY + phone, code, LOGIN_CODE_TTL, TimeUnit.MINUTES);</span><br><span class="line">       // 5. 生成的验证码发送给用户端（模拟发送校验码，具体实际开发自行替换）</span><br><span class="line">       log.info(&quot;生成的验证码信息：&#123;&#125;&quot;, code);</span><br><span class="line">       // 6. 返回信息</span><br><span class="line">       return Result.ok();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>比如我们执行一条简单的set命令，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行redis命令  set name tom</span><br><span class="line">return redis.call(&#x27;set&#x27;, &#x27;name&#x27;, &#x27;tom&#x27;)</span><br></pre></td></tr></table></figure>
 
-<p><strong>注意：RegexUtils是自定义的工具，<code>isPhoneInvalid</code>方法是用来判断手机号是否符合规范，符合才能发送验证码；<code>LOGIN_CODE_KEY</code>和<code>LOGIN_CODE_TTL</code>静态变量都是自定义的值，防止多处编写出错，第一个是Redis的key的前缀，第二个是验证码过期时间。</strong></p>
-<p>登录的共享session的处理，并且用到了hutool工具包，代码如下所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public Result login(LoginFormDTO loginForm, HttpSession session) &#123;</span><br><span class="line">       // 1. 先校验手机号格式</span><br><span class="line">       String phone = loginForm.getPhone();</span><br><span class="line">       if (RegexUtils.isPhoneInvalid(phone)) &#123;</span><br><span class="line">           // 如果不符合就返回错误信息</span><br><span class="line">           return Result.fail(&quot;手机号码无效格式！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 2. 校验验证码</span><br><span class="line">       String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + phone);</span><br><span class="line">       String code = loginForm.getCode();</span><br><span class="line">       if (cacheCode == null || !cacheCode.equals(code))&#123;</span><br><span class="line">           // 验证码错误</span><br><span class="line">           return Result.fail(&quot;验证码错误！&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       // 3. 查询数据库，判断用户是否存在</span><br><span class="line">       QueryWrapper&lt;User&gt; queryWrapper = new QueryWrapper&lt;&gt;();</span><br><span class="line">       queryWrapper.eq(&quot;phone&quot;,phone);</span><br><span class="line">       User user = userMapper.selectOne(queryWrapper);</span><br><span class="line"></span><br><span class="line">       // 4. 用户不存在则新建用户并保存</span><br><span class="line">       if (user == null)&#123;</span><br><span class="line">           user = createUserWithPhone(phone);</span><br><span class="line">       &#125;</span><br><span class="line">       // 5. 把用户信息保存到 Redis 中</span><br><span class="line">       // 5.1 随机生成一个 token 作为令牌存储到 Redis 中</span><br><span class="line">       String token = UUID.randomUUID().toString(false);</span><br><span class="line"></span><br><span class="line">       // 5.2 将 User 对象转换为 HashMap 对象存储</span><br><span class="line">       UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);</span><br><span class="line">       Map&lt;String, Object&gt; userMap = BeanUtil.beanToMap(userDTO,</span><br><span class="line">               new HashMap&lt;&gt;(),</span><br><span class="line">               CopyOptions.create().setIgnoreNullValue(true)  // 忽略空值参数</span><br><span class="line">                       .setFieldValueEditor((k, v) -&gt; v.toString()));  // 处理非String类型转换失败问题</span><br><span class="line">       // 6. 把 token 保存到 redis 中</span><br><span class="line">       String keyToken = LOGIN_USER_KEY + token;</span><br><span class="line">       stringRedisTemplate.opsForHash().putAll(keyToken, userMap);</span><br><span class="line">       // 7. 设置过期时间</span><br><span class="line">       stringRedisTemplate.expire(keyToken, LOGIN_USER_TTL, TimeUnit.MINUTES);</span><br><span class="line"></span><br><span class="line">       // 8. 返回 token</span><br><span class="line">       return Result.ok(token);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以到Redis客户端去执行一下，执行的形式是这样的：</p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246765867.png" alt="1693246765867"></p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246855466.png" alt="1693246855466"></p>
+<p>在Redis客户端执行的结果如下：</p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693247007934.png" alt="1693247007934"></p>
+<p>这就是一个简单的set命令，编写的逻辑与日常编写Redis命令基本一致。</p>
+<p>当然，从帮助那里看出，是可以进行参数传递的。比如像下面这样：</p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248389993.png" alt="1693248389993"></p>
+<p><code>KEYS[1] </code>和 <code>ARGV[1]</code> 是两个数组，都是从1开始的，且参数必须定义成这样，可以定义多个key和value，key类型的参数就会传入KEYS数组，value类型的参数就会传入ARGV数组。<strong>这里需要注意的是，数组不需要单引号，不然就变成一个key或者value了，而不是一个数组。</strong></p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248497801.png" alt="1693248497801"></p>
+<p>前面简单说了一下Lua脚本的语法，下面就是优化内容了。</p>
+<h5 id="（1）、首先编写Lua脚本："><a href="#（1）、首先编写Lua脚本：" class="headerlink" title="（1）、首先编写Lua脚本："></a>（1）、首先编写Lua脚本：</h5><p>释放锁的业务流程是这样的：</p>
+<ol>
+<li><p>获取锁中的线程标识。</p>
+</li>
+<li><p>判断是否与指定的标识（当前线程标识）一致。</p>
+</li>
+<li><p>如果一致则释放锁（删除锁）</p>
+</li>
+<li><p>如果不一致则什么都不做。</p>
+</li>
+</ol>
+<p>用Lua脚本来表示如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-- 获取锁的 key </span><br><span class="line">local id= redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="line"></span><br><span class="line">-- 获取线程标识。判断是否与锁的key一致</span><br><span class="line">if(id == ARGV[1]) then</span><br><span class="line">    -- 一致，释放锁</span><br><span class="line">    return redis.call(&#x27;DEL&#x27;, KEYS[1])</span><br><span class="line">end</span><br><span class="line">return 0</span><br></pre></td></tr></table></figure>
 
-<p><strong>注意：LoginFormDTO是只封装了手机号、验证码和密码三个字段，防止数据过多而导致有泄露的风险。这里使用UUID来作为token来替代session存储到redis服务器中，当用户登录的时候，就会尝试获取token，如果能够获取到，就直接登录并刷新token有效期，为空就创建存储并放行。</strong></p>
-<p>对于token有效期的刷新，可以自定义一个拦截器，用来刷新session的有效期，防止用户在使用过程中session过期的问题：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">*  token 刷新拦截器，拦截一切路径</span><br><span class="line">*/</span><br><span class="line">public class RefreshInterceptor implements HandlerInterceptor &#123;</span><br><span class="line"></span><br><span class="line">    private StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    public RefreshInterceptor(StringRedisTemplate stringRedisTemplate) &#123;</span><br><span class="line">        this.stringRedisTemplate = stringRedisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">        // 基于 Redis 实现登录</span><br><span class="line">        // 1. 获取请求头中的 token</span><br><span class="line">        String token = request.getHeader(&quot;authorization&quot;);</span><br><span class="line">        if (StrUtil.isEmpty(token)) &#123;</span><br><span class="line">            // 不管有没有登录，一直放行</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        // 2. 基于 Token 来获取 redis 中的用户信息</span><br><span class="line">        String key = RedisConstants.LOGIN_USER_KEY + token;</span><br><span class="line">        Map&lt;Object, Object&gt; userMap = stringRedisTemplate.opsForHash().entries(key);</span><br><span class="line">        // 3. 判断用户是否存在</span><br><span class="line">        if (userMap.isEmpty()) &#123;</span><br><span class="line">            // 这里也是一直放行</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        // 5. 将查询到的Hash用户转换成 UserDto 对象</span><br><span class="line">        UserDTO userDTO = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);</span><br><span class="line">        // 6. 用户存在，存到 ThreadLocal中</span><br><span class="line">        UserHolder.saveUser(userDTO);</span><br><span class="line">        // 7. 刷新 token 有效期</span><br><span class="line">        stringRedisTemplate.expire(key, RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES);</span><br><span class="line">        // 8. 放行</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception &#123;</span><br><span class="line">        // 获取完用户信息后及时销毁，防止信息泄漏</span><br><span class="line">        UserHolder.removeUser();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>“–”表示注释符号。local关键字是声明一个局部变量。</strong></p>
+<p><strong>如果使用的是IDEA，这里推荐一个很好用的小插件：EmmyLua，有很多提示，且支持快速创建。创建的脚本后缀是”.lua”。</strong></p>
+<h5 id="2、用Java调用Lua脚本的Api来执行Redis命令："><a href="#2、用Java调用Lua脚本的Api来执行Redis命令：" class="headerlink" title="2、用Java调用Lua脚本的Api来执行Redis命令："></a>2、用Java调用Lua脚本的Api来执行Redis命令：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T execute(RedisScript&lt;T&gt; script, List&lt;K&gt; keys, Object... args) &#123;</span><br><span class="line">        return this.scriptExecutor.execute(script, keys, args);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">	*	登录拦截器，只要判断有无用户即可，无就拦截（其他东西给刷新拦截器做）</span><br><span class="line">	*/</span><br><span class="line">	@Override</span><br><span class="line">    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception &#123;</span><br><span class="line">    	// 1. 基于 ThreadLocal 来判断有没有用户，判断拦截</span><br><span class="line">        if (UserHolder.getUser() == null) &#123;</span><br><span class="line">            // 没有用户，拦截</span><br><span class="line">            response.setStatus(401);</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        // 2. 有用户，则放行</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>在RedisTemplate中，调用Lua脚本Api的方法如上面代码所示，分成了三部分，script是执行脚本内容，keys是key参数列表，args是多个value对象。</strong></p>
+<p>直接在<code>SimpleRedisLock</code>这个类前面添加上这段代码，表示使用Java去创建script对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private static final DefaultRedisScript&lt;Long&gt; UNLOCK_SCRIPT;</span><br><span class="line">   static &#123;</span><br><span class="line">       UNLOCK_SCRIPT = new DefaultRedisScript&lt;&gt;();</span><br><span class="line">       UNLOCK_SCRIPT.setLocation(new ClassPathResource(&quot;unlock.lua&quot;));</span><br><span class="line">       UNLOCK_SCRIPT.setResultType(Long.class);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>注意：UserHolder是基于ThreadLocal来实现的，在同一个线程内，方法区内存是共享的，所以可以获得这个线程的信息。需要自定义拦截的路径，如果配置多个拦截器，要给拦截器指定执行顺序，order方法可以给自定义的拦截器加权重，权重越小执行优先级越高。</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class UserHolder &#123;</span><br><span class="line">    private static final ThreadLocal&lt;UserDTO&gt; tl = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static void saveUser(UserDTO user)&#123;</span><br><span class="line">        tl.set(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static UserDTO getUser()&#123;</span><br><span class="line">        return tl.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void removeUser()&#123;</span><br><span class="line">        tl.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后改写<code>unlock</code>方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public void unlock() &#123;</span><br><span class="line">       // 使用Lua脚本执行释放锁操作（保证原子性）</span><br><span class="line">       stringRedisTemplate.execute(UNLOCK_SCRIPT,</span><br><span class="line">               Collections.singletonList(LOCK_PREFIX + name),</span><br><span class="line">               ID_PREFIX + Thread.currentThread().getId());</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>以上是基于Redis实现Session共享的问题的一种解决方案，还有更好的替代方案，比如在处理拦截的时候，可以使用更专业的工具，如spring getaway 可以很好地在微服务架构中应用；比如生成token的算法，可以选择雪花算法等。</strong></p>
+<p>UNLOCK_SCRIPT对象是静态代码块，一开始就已经把<code>script</code>对象创建好了；key因为只有一个，所以就使用Collections这种方式来创建；至于锁的标识，因为<code>execute</code>方法没有类型限制，就直接拼接成字符串了。</p>
+<p>以上就是使用Lua脚本优化使用分布式锁解决一人一单在集群模式下的问题。这是基于不可重入锁的机制来实现的，因为前面尝试获取锁的时候，获取成功才能执行后续业务，获取失败就返回false，没有继续获取锁。前面也有说过一个很好用的工具–Redisson，顾名思义，就是基于Redis来优化的，主要是优化Redis在分布式命令上的操作，提供了一系列的分布式的Java常见对象，还提供了许多分布式服务，其中就包含各种分布式锁的实现。后面有时间会一并分享出来。</p>
 
       
         <!-- 增加版权声明 -->
@@ -280,7 +307,7 @@
           
           <br>
           <strong>本文链接：</strong>
-          <a rel="license" href="https://longzas.github.io/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/">https://longzas.github.io/2023/08/22/%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABSession%E7%99%BB%E5%BD%95/</a>
+          <a rel="license" href="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/">https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/</a>
           <br>
           <strong>版权声明：</strong>
           本作品采用
@@ -300,7 +327,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Redis缓存</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Redis高并发</a>
         		</li>
       		
 		</ul>
@@ -330,18 +357,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2023/08/23/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Redis缓存穿透问题及解决方法
-        
-      </div>
-    </a>
   
-  
-    <a href="/2023/08/21/MySQL%E7%AE%A1%E7%90%86%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%A5%BD%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">MySQL管理中一些好用的工具</div>
+    <a href="/2023/08/27/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Redis分布式锁</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -390,7 +408,7 @@ if(true){
   	repo: 'blogcomments',
   	owner: 'LongZas',
   	admin: ['LongZas'],
-  	id: 'Tue Aug 22 2023 12:30:32 GMT+0800',
+  	id: 'Tue Aug 29 2023 12:20:01 GMT+0800',
   	distractionFreeMode: 'false'
 })
 gitalk.render('gitalk-container') 

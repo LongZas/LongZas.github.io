@@ -182,6 +182,260 @@
             
   
   
+    <article id="post-Lua脚本优化分布式锁原子性问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/">Lua脚本优化分布式锁原子性问题</a>
+    </h1>
+  
+
+        
+        <a href="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/" class="archive-article-date">
+  	<time datetime="2023-08-29T04:20:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-29</time>
+</a>
+        <!-- 需要添加的位置 -->
+          <!-- 开始添加字数统计-->
+          
+            
+            
+          <!-- 添加完成 -->
+
+          <!--显示阅读次数-->
+          
+          <!--显示阅读次数完毕-->
+          
+          
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+            
+
+        
+
+        <p>Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，可以确保多条命令执行时的原子性。Lua是一种编程语言，它的基本语法可以参考网站：<a target="_blank" rel="noopener" href="https://www.runoob.com/lua/lua-tutorial.html">https://www.runoob.com/lua/lua-tutorial.html</a></p>
+<p>本篇文章优化分布式锁的原子性用到的命令不多，重点介绍一下下面这个命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行 REdis 命令</span><br><span class="line">redis.call(&#x27;命令名称&#x27;, &#x27;key&#x27;, &#x27;其他参数&#x27;, ...)</span><br></pre></td></tr></table></figure>
+
+<p>比如我们执行一条简单的set命令，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行redis命令  set name tom</span><br><span class="line">return redis.call(&#x27;set&#x27;, &#x27;name&#x27;, &#x27;tom&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以到Redis客户端去执行一下，执行的形式是这样的：</p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246765867.png" alt="1693246765867"></p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246855466.png" alt="1693246855466"></p>
+<p>在Redis客户端执行的结果如下：</p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693247007934.png" alt="1693247007934"></p>
+<p>这就是一个简单的set命令，编写的逻辑与日常编写Redis命令基本一致。</p>
+<p>当然，从帮助那里看出，是可以进行参数传递的。比如像下面这样：</p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248389993.png" alt="1693248389993"></p>
+<p><code>KEYS[1] </code>和 <code>ARGV[1]</code> 是两个数组，都是从1开始的，且参数必须定义成这样，可以定义多个key和value，key类型的参数就会传入KEYS数组，value类型的参数就会传入ARGV数组。<strong>这里需要注意的是，数组不需要单引号，不然就变成一个key或者value了，而不是一个数组。</strong></p>
+<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248497801.png" alt="1693248497801"></p>
+<p>前面简单说了一下Lua脚本的语法，下面就是优化内容了。</p>
+<h5 id="（1）、首先编写Lua脚本："><a href="#（1）、首先编写Lua脚本：" class="headerlink" title="（1）、首先编写Lua脚本："></a>（1）、首先编写Lua脚本：</h5><p>释放锁的业务流程是这样的：</p>
+<ol>
+<li><p>获取锁中的线程标识。</p>
+</li>
+<li><p>判断是否与指定的标识（当前线程标识）一致。</p>
+</li>
+<li><p>如果一致则释放锁（删除锁）</p>
+</li>
+<li><p>如果不一致则什么都不做。</p>
+</li>
+</ol>
+<p>用Lua脚本来表示如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-- 获取锁的 key </span><br><span class="line">local id= redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="line"></span><br><span class="line">-- 获取线程标识。判断是否与锁的key一致</span><br><span class="line">if(id == ARGV[1]) then</span><br><span class="line">    -- 一致，释放锁</span><br><span class="line">    return redis.call(&#x27;DEL&#x27;, KEYS[1])</span><br><span class="line">end</span><br><span class="line">return 0</span><br></pre></td></tr></table></figure>
+
+<p><strong>“–”表示注释符号。local关键字是声明一个局部变量。</strong></p>
+<p><strong>如果使用的是IDEA，这里推荐一个很好用的小插件：EmmyLua，有很多提示，且支持快速创建。创建的脚本后缀是”.lua”。</strong></p>
+<h5 id="2、用Java调用Lua脚本的Api来执行Redis命令："><a href="#2、用Java调用Lua脚本的Api来执行Redis命令：" class="headerlink" title="2、用Java调用Lua脚本的Api来执行Redis命令："></a>2、用Java调用Lua脚本的Api来执行Redis命令：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T execute(RedisScript&lt;T&gt; script, List&lt;K&gt; keys, Object... args) &#123;</span><br><span class="line">        return this.scriptExecutor.execute(script, keys, args);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>在RedisTemplate中，调用Lua脚本Api的方法如上面代码所示，分成了三部分，script是执行脚本内容，keys是key参数列表，args是多个value对象。</strong></p>
+<p>直接在<code>SimpleRedisLock</code>这个类前面添加上这段代码，表示使用Java去创建script对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private static final DefaultRedisScript&lt;Long&gt; UNLOCK_SCRIPT;</span><br><span class="line">   static &#123;</span><br><span class="line">       UNLOCK_SCRIPT = new DefaultRedisScript&lt;&gt;();</span><br><span class="line">       UNLOCK_SCRIPT.setLocation(new ClassPathResource(&quot;unlock.lua&quot;));</span><br><span class="line">       UNLOCK_SCRIPT.setResultType(Long.class);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后改写<code>unlock</code>方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public void unlock() &#123;</span><br><span class="line">       // 使用Lua脚本执行释放锁操作（保证原子性）</span><br><span class="line">       stringRedisTemplate.execute(UNLOCK_SCRIPT,</span><br><span class="line">               Collections.singletonList(LOCK_PREFIX + name),</span><br><span class="line">               ID_PREFIX + Thread.currentThread().getId());</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>UNLOCK_SCRIPT对象是静态代码块，一开始就已经把<code>script</code>对象创建好了；key因为只有一个，所以就使用Collections这种方式来创建；至于锁的标识，因为<code>execute</code>方法没有类型限制，就直接拼接成字符串了。</p>
+<p>以上就是使用Lua脚本优化使用分布式锁解决一人一单在集群模式下的问题。这是基于不可重入锁的机制来实现的，因为前面尝试获取锁的时候，获取成功才能执行后续业务，获取失败就返回false，没有继续获取锁。前面也有说过一个很好用的工具–Redisson，顾名思义，就是基于Redis来优化的，主要是优化Redis在分布式命令上的操作，提供了一系列的分布式的Java常见对象，还提供了许多分布式服务，其中就包含各种分布式锁的实现。后面有时间会一并分享出来。</p>
+
+      
+        <!-- 增加版权声明 -->
+
+        
+        
+        <div class="declare" hidden="hidden"></div>
+        
+
+        <!-- 增加版权声明结束 -->
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Redis高并发</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Redis//" class="article-tag-list-link color1">Redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Redis分布式锁" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/08/27/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">Redis分布式锁</a>
+    </h1>
+  
+
+        
+        <a href="/2023/08/27/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" class="archive-article-date">
+  	<time datetime="2023-08-26T16:23:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-27</time>
+</a>
+        <!-- 需要添加的位置 -->
+          <!-- 开始添加字数统计-->
+          
+            
+            
+          <!-- 添加完成 -->
+
+          <!--显示阅读次数-->
+          
+          <!--显示阅读次数完毕-->
+          
+          
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+            
+        <p>分布式锁的核心就是实现多线程之间的互斥，能够实现这一点的方式有很多，比如MySQL的的锁机制，而今天要说的是Redis。在上一篇文章中提到，在单体服务器下，前面的代码逻辑是可以很好地实现的，但是在集群的时候，由于每台服务器都有自己的锁监视器，所以不能保证每个用户获取到的锁是同一把锁，也就无法保证一人一单的问题。</p>
+<p>所以今天要说的分布式锁就是为了解决在集群模式下，如何保证锁在多线程的情况下，每个用户拿到的锁是同一把锁。</p>
+        
+          <a class="article-more-a" href="/2023/08/27/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/#more">more >></a>
+        
+      
+        <!-- 增加版权声明 -->
+
+        
+        
+        <div class="declare" hidden="hidden"></div>
+        
+
+        <!-- 增加版权声明结束 -->
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Redis高并发</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Redis//" class="article-tag-list-link color1">Redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/08/27/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Redis高并发场景-商品秒杀活动" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -349,6 +603,17 @@
 	</div>
 
       
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Redis//" class="article-tag-list-link color1">Redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
       
         <p class="article-more-link">
@@ -752,7 +1017,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
         		</li>
       		
 		</ul>
@@ -962,7 +1227,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
         		</li>
       		
 		</ul>
@@ -1013,207 +1278,10 @@
 
 
   
-    <article id="post-对System.out.println()这个打印语句的认识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/">对System.out.println()这个打印语句的认识</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/" class="archive-article-date">
-  	<time datetime="2023-08-16T06:37:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-16</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-
-          <!--显示阅读次数-->
-          
-          <!--显示阅读次数完毕-->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p>在Java中，System 这个类是由 <code>final</code> 关键字修饰的，表明这是一个不可被继承类，而 <code>out</code> 这个变量实际上是System类中的一个静态的、公有的、<code>final</code> 的打印流对象。这个对象被定义在System类中，可以被所有的类和对象访问和使用，用来进行输出操作。 </p>
-<p> 因此，尽管System类不能被继承，但是它的静态成员（如<code>out</code>）仍然可以被访问和使用，这就是为什么我们可以使用<code>System.out</code>来进行输出的原因。静态成员并不属于任何类的实例，它们属于类本身，因此不受到<code>final</code>修饰的影响。</p>
-        
-          <a class="article-more-a" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/#more">more >></a>
-        
-      
-        <!-- 增加版权声明 -->
-
-        
-        
-        <div class="declare" hidden="hidden"></div>
-        
-
-        <!-- 增加版权声明结束 -->
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Github访问速度慢的一个解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">Github访问速度慢的一个解决方案</a>
-    </h1>
-  
-
-        
-        <a href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-15T08:39:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-15</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-            
-          <!-- 添加完成 -->
-
-          <!--显示阅读次数-->
-          
-          <!--显示阅读次数完毕-->
-          
-          
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-            
-        <p><strong>在国内，GitHub的访问速度可能较慢的原因主要有网络延迟和网络阻断问题。</strong></p>
-<ol>
-<li>网络延迟问题：GitHub的服务器架设在全球各地，因此在全球都有大量的用户。由于网络延迟的原因，不同地域的访问速度会有很大的差异，在国内的访问速度也可能较慢。</li>
-<li>网络阻断问题：由于中国的特殊网络环境，部分GitHub的IP被墙，这意味着部分内容无法在国内访问，这也会导致GitHub在中国的访问速度受到限制。虽然GitHub已经支持了HTTPS协议，但因为一些原因，使用HTTPS也可能无法完全避免网络阻断问题。</li></ol>
-        
-          <a class="article-more-a" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/#more">more >></a>
-        
-      
-        <!-- 增加版权声明 -->
-
-        
-        
-        <div class="declare" hidden="hidden"></div>
-        
-
-        <!-- 增加版权声明结束 -->
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    </nav>
   
 
   
@@ -1317,7 +1385,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Redis缓存</a>
+                <a href="javascript:void(0)" class="js-tag color4">Redis高并发</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1325,7 +1393,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Redis高并发</a>
+                <a href="javascript:void(0)" class="js-tag color3">Redis缓存</a>
               </li>
             
             <div class="clearfix"></div>
