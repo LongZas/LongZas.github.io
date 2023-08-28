@@ -213,55 +213,14 @@
     
     <div class="article-entry" itemprop="articleBody">
             
-
-        
-
         <p>Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，可以确保多条命令执行时的原子性。Lua是一种编程语言，它的基本语法可以参考网站：<a target="_blank" rel="noopener" href="https://www.runoob.com/lua/lua-tutorial.html">https://www.runoob.com/lua/lua-tutorial.html</a></p>
 <p>本篇文章优化分布式锁的原子性用到的命令不多，重点介绍一下下面这个命令：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行 REdis 命令</span><br><span class="line">redis.call(&#x27;命令名称&#x27;, &#x27;key&#x27;, &#x27;其他参数&#x27;, ...)</span><br></pre></td></tr></table></figure>
 
 <p>比如我们执行一条简单的set命令，如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行redis命令  set name tom</span><br><span class="line">return redis.call(&#x27;set&#x27;, &#x27;name&#x27;, &#x27;tom&#x27;)</span><br></pre></td></tr></table></figure>
-
-<p>我们可以到Redis客户端去执行一下，执行的形式是这样的：</p>
-<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246765867.png" alt="1693246765867"></p>
-<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693246855466.png" alt="1693246855466"></p>
-<p>在Redis客户端执行的结果如下：</p>
-<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693247007934.png" alt="1693247007934"></p>
-<p>这就是一个简单的set命令，编写的逻辑与日常编写Redis命令基本一致。</p>
-<p>当然，从帮助那里看出，是可以进行参数传递的。比如像下面这样：</p>
-<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248389993.png" alt="1693248389993"></p>
-<p><code>KEYS[1] </code>和 <code>ARGV[1]</code> 是两个数组，都是从1开始的，且参数必须定义成这样，可以定义多个key和value，key类型的参数就会传入KEYS数组，value类型的参数就会传入ARGV数组。<strong>这里需要注意的是，数组不需要单引号，不然就变成一个key或者value了，而不是一个数组。</strong></p>
-<p><img src="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248497801.png" alt="1693248497801"></p>
-<p>前面简单说了一下Lua脚本的语法，下面就是优化内容了。</p>
-<h5 id="（1）、首先编写Lua脚本："><a href="#（1）、首先编写Lua脚本：" class="headerlink" title="（1）、首先编写Lua脚本："></a>（1）、首先编写Lua脚本：</h5><p>释放锁的业务流程是这样的：</p>
-<ol>
-<li><p>获取锁中的线程标识。</p>
-</li>
-<li><p>判断是否与指定的标识（当前线程标识）一致。</p>
-</li>
-<li><p>如果一致则释放锁（删除锁）</p>
-</li>
-<li><p>如果不一致则什么都不做。</p>
-</li>
-</ol>
-<p>用Lua脚本来表示如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-- 获取锁的 key </span><br><span class="line">local id= redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="line"></span><br><span class="line">-- 获取线程标识。判断是否与锁的key一致</span><br><span class="line">if(id == ARGV[1]) then</span><br><span class="line">    -- 一致，释放锁</span><br><span class="line">    return redis.call(&#x27;DEL&#x27;, KEYS[1])</span><br><span class="line">end</span><br><span class="line">return 0</span><br></pre></td></tr></table></figure>
-
-<p><strong>“–”表示注释符号。local关键字是声明一个局部变量。</strong></p>
-<p><strong>如果使用的是IDEA，这里推荐一个很好用的小插件：EmmyLua，有很多提示，且支持快速创建。创建的脚本后缀是”.lua”。</strong></p>
-<h5 id="2、用Java调用Lua脚本的Api来执行Redis命令："><a href="#2、用Java调用Lua脚本的Api来执行Redis命令：" class="headerlink" title="2、用Java调用Lua脚本的Api来执行Redis命令："></a>2、用Java调用Lua脚本的Api来执行Redis命令：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T execute(RedisScript&lt;T&gt; script, List&lt;K&gt; keys, Object... args) &#123;</span><br><span class="line">        return this.scriptExecutor.execute(script, keys, args);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>在RedisTemplate中，调用Lua脚本Api的方法如上面代码所示，分成了三部分，script是执行脚本内容，keys是key参数列表，args是多个value对象。</strong></p>
-<p>直接在<code>SimpleRedisLock</code>这个类前面添加上这段代码，表示使用Java去创建script对象。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private static final DefaultRedisScript&lt;Long&gt; UNLOCK_SCRIPT;</span><br><span class="line">   static &#123;</span><br><span class="line">       UNLOCK_SCRIPT = new DefaultRedisScript&lt;&gt;();</span><br><span class="line">       UNLOCK_SCRIPT.setLocation(new ClassPathResource(&quot;unlock.lua&quot;));</span><br><span class="line">       UNLOCK_SCRIPT.setResultType(Long.class);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后改写<code>unlock</code>方法：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public void unlock() &#123;</span><br><span class="line">       // 使用Lua脚本执行释放锁操作（保证原子性）</span><br><span class="line">       stringRedisTemplate.execute(UNLOCK_SCRIPT,</span><br><span class="line">               Collections.singletonList(LOCK_PREFIX + name),</span><br><span class="line">               ID_PREFIX + Thread.currentThread().getId());</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-<p>UNLOCK_SCRIPT对象是静态代码块，一开始就已经把<code>script</code>对象创建好了；key因为只有一个，所以就使用Collections这种方式来创建；至于锁的标识，因为<code>execute</code>方法没有类型限制，就直接拼接成字符串了。</p>
-<p>以上就是使用Lua脚本优化使用分布式锁解决一人一单在集群模式下的问题。这是基于不可重入锁的机制来实现的，因为前面尝试获取锁的时候，获取成功才能执行后续业务，获取失败就返回false，没有继续获取锁。前面也有说过一个很好用的工具–Redisson，顾名思义，就是基于Redis来优化的，主要是优化Redis在分布式命令上的操作，提供了一系列的分布式的Java常见对象，还提供了许多分布式服务，其中就包含各种分布式锁的实现。后面有时间会一并分享出来。</p>
-
+        
+          <a class="article-more-a" href="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/#more">more >></a>
+        
       
         <!-- 增加版权声明 -->
 
@@ -1381,19 +1340,19 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">杂记</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Redis高并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂记</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Redis缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
             
             <div class="clearfix"></div>

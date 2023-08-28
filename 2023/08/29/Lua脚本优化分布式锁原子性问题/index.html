@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248389993.png">
 <meta property="og:image" content="https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/1693248497801.png">
 <meta property="article:published_time" content="2023-08-29T04:20:01.000Z">
-<meta property="article:modified_time" content="2023-08-28T19:23:40.644Z">
+<meta property="article:modified_time" content="2023-08-28T19:47:35.205Z">
 <meta property="article:author" content="Long HY">
 <meta property="article:tag" content="Redis高并发">
 <meta name="twitter:card" content="summary">
@@ -253,7 +253,7 @@
 <p>本篇文章优化分布式锁的原子性用到的命令不多，重点介绍一下下面这个命令：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行 REdis 命令</span><br><span class="line">redis.call(&#x27;命令名称&#x27;, &#x27;key&#x27;, &#x27;其他参数&#x27;, ...)</span><br></pre></td></tr></table></figure>
 
-<p>比如我们执行一条简单的set命令，如下：</p>
+<p>比如我们执行一条简单的set命令，如下：<span id="more"></span></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 执行redis命令  set name tom</span><br><span class="line">return redis.call(&#x27;set&#x27;, &#x27;name&#x27;, &#x27;tom&#x27;)</span><br></pre></td></tr></table></figure>
 
 <p>我们可以到Redis客户端去执行一下，执行的形式是这样的：</p>
@@ -514,19 +514,19 @@ gitalk.render('gitalk-container')
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">杂记</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Redis高并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂记</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Redis缓存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
             
             <div class="clearfix"></div>
