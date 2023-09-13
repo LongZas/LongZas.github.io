@@ -3007,7 +3007,8 @@ pre .id {
         z-index: 999;
         overflow: hidden;
         overflow-y: auto;
-        margin-bottom: 15px
+        margin-bottom: 15px;
+		display: none;
     }
 
     .mid-col {
