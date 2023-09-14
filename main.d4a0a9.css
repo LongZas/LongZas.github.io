@@ -1,8 +1,8 @@
 .mymenucontainer {
     display: block;
     cursor: pointer;
-    left: 260px;
-    top: 0;
+    left: 2px;
+    top: 2px;
     width: 35px;
     height: 35px;
     z-index: 9999;
