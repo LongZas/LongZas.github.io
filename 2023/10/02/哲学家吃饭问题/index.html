@@ -8,23 +8,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://longzas.github.io">
-  <title>往虚拟机的MySQL数据库插入大量数据的一种解决方案 | LongZ</title>
+  <title>哲学家吃饭问题 | LongZ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天学习Docker，在弄MySQL容器的时候，需要往这个数据库容器里面插入大量的数据，这时在想，即便是写一个程序来导入数据应该也需要花费不少的时间吧。我就在想，有没有一种解决方案可以快速解决这个问题，突然想起了之前在学MySQL时，学到的SQL优化问题，里面就有针对insert做出的优化，就是把一个特定格式的文本文件，直接使用MySQL提供的load指令来把特定格式的文本文件加载到指定的数据库里">
+  <meta name="description" content="哲学家吃饭问题是计算机科学中经典的多线程同步问题之一。问题描述如下： 有五个哲学家围坐在圆桌上，进行思考和进食。哲学家们只做两件事：思考和吃饭。他们每人有一只碗，和一只筷子。每个哲学家面前都有一碗饭。他们思考时，不吃饭，吃饭时，不思考。 这个问题的关键在于，每个哲学家都必须等待左右两边的哲学家都吃完饭才能开始吃饭。也就是说，哲学家们必须按照一个方向开始吃饭。当一个哲学家吃饭的时候，他必须等待他左">
 <meta property="og:type" content="article">
-<meta property="og:title" content="往虚拟机的MySQL数据库插入大量数据的一种解决方案">
-<meta property="og:url" content="https://longzas.github.io/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:title" content="哲学家吃饭问题">
+<meta property="og:url" content="https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="LongZ">
-<meta property="og:description" content="今天学习Docker，在弄MySQL容器的时候，需要往这个数据库容器里面插入大量的数据，这时在想，即便是写一个程序来导入数据应该也需要花费不少的时间吧。我就在想，有没有一种解决方案可以快速解决这个问题，突然想起了之前在学MySQL时，学到的SQL优化问题，里面就有针对insert做出的优化，就是把一个特定格式的文本文件，直接使用MySQL提供的load指令来把特定格式的文本文件加载到指定的数据库里">
+<meta property="og:description" content="哲学家吃饭问题是计算机科学中经典的多线程同步问题之一。问题描述如下： 有五个哲学家围坐在圆桌上，进行思考和进食。哲学家们只做两件事：思考和吃饭。他们每人有一只碗，和一只筷子。每个哲学家面前都有一碗饭。他们思考时，不吃饭，吃饭时，不思考。 这个问题的关键在于，每个哲学家都必须等待左右两边的哲学家都吃完饭才能开始吃饭。也就是说，哲学家们必须按照一个方向开始吃饭。当一个哲学家吃饭的时候，他必须等待他左">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://longzas.github.io/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/infile_01.png">
-<meta property="og:image" content="https://longzas.github.io/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/infile_02.png">
-<meta property="article:published_time" content="2023-08-18T07:00:13.000Z">
-<meta property="article:modified_time" content="2023-08-22T11:30:28.183Z">
+<meta property="og:image" content="https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/1696262042685.png">
+<meta property="og:image" content="https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/1696263042968.png">
+<meta property="article:published_time" content="2023-10-02T14:05:58.000Z">
+<meta property="article:modified_time" content="2023-10-02T16:26:30.718Z">
 <meta property="article:author" content="Long HY">
-<meta property="article:tag" content="随笔">
+<meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://longzas.github.io/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/infile_01.png">
+<meta name="twitter:image" content="https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/1696262042685.png">
   
     <link rel="alternative" href="/atom.xml" title="LongZ" type="application/atom+xml">
   
@@ -185,20 +185,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-往虚拟机的Mysql数据库插入大量数据的一种解决方案" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-哲学家吃饭问题" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      往虚拟机的MySQL数据库插入大量数据的一种解决方案
+      哲学家吃饭问题
     </h1>
   
 
         
-        <a href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-18T07:00:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-18</time>
+        <a href="/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/" class="archive-article-date">
+  	<time datetime="2023-10-02T14:05:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-02</time>
 </a>
         <!-- 需要添加的位置 -->
           <!-- 开始添加字数统计-->
@@ -209,7 +209,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">493字</span>
+        <span class="post-count">1.4k字</span>
       </span>
     </span>
 
@@ -218,7 +218,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">1分</span>
+        <span class="post-count">5分</span>
       </span>
     </span>
 </div>
@@ -246,26 +246,25 @@
 
         
 
-        <p>今天学习Docker，在弄MySQL容器的时候，需要往这个数据库容器里面插入大量的数据，这时在想，即便是写一个程序来导入数据应该也需要花费不少的时间吧。我就在想，有没有一种解决方案可以快速解决这个问题，突然想起了之前在学MySQL时，学到的SQL优化问题，里面就有针对<code>insert</code>做出的优化，就是把一个特定格式的文本文件，直接使用MySQL提供的<code>load</code>指令来把特定格式的文本文件加载到指定的数据库里面。</p>
-<p>下面是我整理的一种优化方法：<span id="more"></span></p>
-<p>下图是需要准备的文本文件格式，列之间用逗号隔开（英文格式）。</p>
-<p><img src="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/infile_01.png" alt="infile_01"></p>
-<p>1、在连接数据库服务器的时候，加上参数  –local-infile</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql --local-infile -u root -p</span><br></pre></td></tr></table></figure>
+        <p> 哲学家吃饭问题是计算机科学中经典的多线程同步问题之一。问题描述如下：</p>
+<p>有五个哲学家围坐在圆桌上，进行思考和进食。哲学家们只做两件事：思考和吃饭。他们每人有一只碗，和一只筷子。每个哲学家面前都有一碗饭。他们思考时，不吃饭，吃饭时，不思考。</p>
+<p>这个问题的关键在于，每个哲学家都必须等待左右两边的哲学家都吃完饭才能开始吃饭。也就是说，哲学家们必须按照一个方向开始吃饭。当一个哲学家吃饭的时候，他必须等待他左右两边的哲学家都吃完。当一个哲学家思考的时候，他不会阻止其他哲学家吃饭。</p>
+<p>这个问题可以用Java的synchronized关键字来解决。我们可以创建一个类来表示一个哲学家，每个哲学家只有同时拿到左右手的筷子才能吃饭，其他人只能等待旁边的哲学家吃完饭才能吃饭。</p>
+<p>一般情况下，可能出现的是这样的情况，就是每个哲学家同时拿到左手的筷子，那么他们都会在等待另一个人放下筷子，他才能拿到右手的筷子，才能去吃饭，但是如果都同时拿起左手的筷子，那么就都没有右手的筷子，这里模拟一下死锁的情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个独立的类，表示筷子</span><br><span class="line">public class Chopstick &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>2、输入正确的密码登录到数据库后，设置全局参数local-infile的值为1，开启从本地加载文件导入数据的开关</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global local-infile = 1;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个类，表示这种死锁情况</span><br><span class="line">public class P01_DeadLock &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">		// 创建五根筷子</span><br><span class="line">        Chopstick cs0 = new Chopstick();</span><br><span class="line">        Chopstick cs1 = new Chopstick();</span><br><span class="line">        Chopstick cs2 = new Chopstick();</span><br><span class="line">        Chopstick cs3 = new Chopstick();</span><br><span class="line">        Chopstick cs4 = new Chopstick();</span><br><span class="line">		// 创建五个哲学家，只有拿到左右手的筷子才能吃饭</span><br><span class="line">        Philosopher p0 = new Philosopher(&quot;p0&quot;, 0, cs0, cs1);</span><br><span class="line">        Philosopher p1 = new Philosopher(&quot;p1&quot;, 1, cs1, cs2);</span><br><span class="line">        Philosopher p2 = new Philosopher(&quot;p2&quot;, 2, cs2, cs3);</span><br><span class="line">        Philosopher p3 = new Philosopher(&quot;p3&quot;, 3, cs3, cs4);</span><br><span class="line">        Philosopher p4 = new Philosopher(&quot;p4&quot;, 4, cs4, cs0);</span><br><span class="line">		// 线程开始执行</span><br><span class="line">        p0.start();</span><br><span class="line">        p1.start();</span><br><span class="line">        p2.start();</span><br><span class="line">        p3.start();</span><br><span class="line">        p4.start();</span><br><span class="line">    &#125;</span><br><span class="line">	// 哲学家类，这里创建的是一个内部类，继承线程</span><br><span class="line">    public static class Philosopher extends Thread &#123;</span><br><span class="line"></span><br><span class="line">        private Chopstick left, right;</span><br><span class="line">        private int index;</span><br><span class="line"></span><br><span class="line">        public Philosopher(String name, int index, Chopstick left, Chopstick right)&#123;</span><br><span class="line">            this.setName(name);</span><br><span class="line">            this.index = index;</span><br><span class="line">            this.left = left;</span><br><span class="line">            this.right = right;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            synchronized (left)&#123;</span><br><span class="line">                timeSleep();</span><br><span class="line">                System.out.println(getName() + &quot;号拿到左手的筷子，等待拿右手的筷子...&quot;);</span><br><span class="line">                synchronized (right)&#123;</span><br><span class="line">                    timeSleep();</span><br><span class="line">                    System.out.println(getName() + &quot;号拿到右手的筷子，正在吃饭...&quot;);</span><br><span class="line">                    System.out.println(&quot;吃完了&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>3、执行<code>load</code>指令将准备好的数据，加载到表结构中</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load data local infile &#x27;/root/test.txt&#x27; into table tb_user fields terminated by &#x27;,&#x27; lines terminated by &#x27;\n&#x27;;</span><br></pre></td></tr></table></figure>
+<p><strong>这里没有定义eat()方法表示吃饭，而是直接在run方法里面执行完全部的步骤。每个哲学家都创建了两根筷子，表示只有拿到两根筷子才能开始吃饭，index表示哲学家的编号。run方法里面的执行方法模拟的就是，每个哲学家先拿到左手的筷子，都在等待右手的筷子。但是每个哲学家都已经同时拿起了左手的筷子，那么右手的筷子也就没有了，那么都在等待右手的筷子，导致谁也吃不了饭。（当前人的右手筷子是一下个人左手的筷子）其中，timeSleep方法只是处理Thread.sleep()异常的封装，无特殊处理。</strong></p>
+<p><img src="/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/1696262042685.png" alt="1696262042685"></p>
+<p>上面的情况就是所有人都在等待拿右手的筷子，但是谁都拿不到，造成谁也吃不了的局面。要解决这个问题，可以给出一个方案，就是偶数的哲学家先拿到右手的筷子，再拿左手的筷子先吃，吃饭就放下两根筷子；奇数的哲学家拿到先拿左手的筷子，再拿右手的筷子再吃饭，这样问题就解决了。</p>
+<p>下面是解决这一问题的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">public class P02_DeadLockOpen &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        Chopstick cs0 = new Chopstick();</span><br><span class="line">        Chopstick cs1 = new Chopstick();</span><br><span class="line">        Chopstick cs2 = new Chopstick();</span><br><span class="line">        Chopstick cs3 = new Chopstick();</span><br><span class="line">        Chopstick cs4 = new Chopstick();</span><br><span class="line"></span><br><span class="line">        Philosopher p0 = new Philosopher(&quot;哲学家01&quot;, 0, cs0, cs1);</span><br><span class="line">        Philosopher p1 = new Philosopher(&quot;哲学家02&quot;, 1, cs1, cs2);</span><br><span class="line">        Philosopher p2 = new Philosopher(&quot;哲学家03&quot;, 2, cs2, cs3);</span><br><span class="line">        Philosopher p3 = new Philosopher(&quot;哲学家04&quot;, 3, cs3, cs4);</span><br><span class="line">        Philosopher p4 = new Philosopher(&quot;哲学家05&quot;, 4, cs4, cs0);</span><br><span class="line"></span><br><span class="line">        p0.start();</span><br><span class="line">        p1.start();</span><br><span class="line">        p2.start();</span><br><span class="line">        p3.start();</span><br><span class="line">        p4.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class Philosopher extends Thread &#123;</span><br><span class="line"></span><br><span class="line">        private Chopstick left, right;</span><br><span class="line">        private int index;</span><br><span class="line"></span><br><span class="line">        public Philosopher(String name, int index, Chopstick left, Chopstick right)&#123;</span><br><span class="line">            this.setName(name);</span><br><span class="line">            this.index = index;</span><br><span class="line">            this.left = left;</span><br><span class="line">            this.right = right;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            //奇数拿左边的，偶数拿右边的</span><br><span class="line">            if (index % 2 == 0)&#123;</span><br><span class="line">                synchronized (left)&#123;</span><br><span class="line">                    timeSleep();</span><br><span class="line">                    System.out.println(getName() + &quot;号拿到右手的筷子，等待拿左手的筷子...&quot;);</span><br><span class="line">                    synchronized (right)&#123;</span><br><span class="line">                        timeSleep();</span><br><span class="line">                        System.out.println(getName() + &quot;号拿到左手的筷子，正在吃饭...&quot;);</span><br><span class="line">                        System.out.println(getName() + &quot;号吃完了，放下筷子。&quot;);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;else &#123;</span><br><span class="line">                synchronized (right)&#123;</span><br><span class="line">                    timeSleep();</span><br><span class="line">                    System.out.println(getName() + &quot;号拿到左手的筷子，等待拿右手的筷子...&quot;);</span><br><span class="line">                    synchronized (left)&#123;</span><br><span class="line">                        timeSleep();</span><br><span class="line">                        System.out.println(getName() + &quot;号拿到右手的筷子，正在吃饭...&quot;);</span><br><span class="line">                        System.out.println(getName() + &quot;号吃完了，放下筷子。&quot;);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>注：上面这句指令的意思是从本地加载数据到那个数据表，用逗号隔开，以换行符结束。</strong></p>
-<p>下面是执行完一个百万级数据量数据的执行时间，只用了接近17秒的时间，可以说是非常快的速度了。</p>
-<p><img src="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/infile_02.png" alt="infile_02"></p>
-<p><strong>这里也有一个小细节，就是如果文本数据是按照主键顺序来插入的话，性能是要高于乱序插入的。</strong></p>
-<p>这里也分享一个在Linux虚拟机查看文件参数的一些指令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查看文件行数</span><br><span class="line">wc -l test.sql(filename)</span><br><span class="line"># 显示前十行数据</span><br><span class="line">head filename</span><br><span class="line"># 持续显示文件后十行数据</span><br><span class="line">tail -f -n 10 filename</span><br></pre></td></tr></table></figure>
-
+<p>执行结果如下：</p>
+<p><img src="/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/1696263042968.png" alt="1696263042968"></p>
+<p>需要注意的是，打印的顺序是线程控制的，不一定与执行的顺序一致。（参考线程的生命周期）</p>
+<p>这样就解决了哲学家吃饭问题，这里考虑执行优先级和时间都是不对的。如果给每个哲学家一个固定的优先级或时间片，那么会出现某些哲学家一致得不到执行的情况，这会导致其他哲学家也会跟着挨饿，即死锁问题。</p>
 
       
         <!-- 增加版权声明 -->
@@ -279,7 +278,7 @@
           
           <br>
           <strong>本文链接：</strong>
-          <a rel="license" href="https://longzas.github.io/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">https://longzas.github.io/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</a>
+          <a rel="license" href="https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/">https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/</a>
           <br>
           <strong>版权声明：</strong>
           本作品采用
@@ -299,7 +298,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
         		</li>
       		
 		</ul>
@@ -311,7 +310,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/MySQL//" class="article-tag-list-link color1">MySQL</a>
+        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
         		</li>
       		
 		</ul>
@@ -329,18 +328,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          序列化过程中版本号不一致的问题
-        
-      </div>
-    </a>
   
-  
-    <a href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">对System.out.println()这个打印语句的认识</div>
+    <a href="/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Lua脚本优化分布式锁原子性问题</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -389,7 +379,7 @@ if(true){
   	repo: 'blogcomments',
   	owner: 'LongZas',
   	admin: ['LongZas'],
-  	id: 'Fri Aug 18 2023 15:00:13 GMT+0800',
+  	id: 'Mon Oct 02 2023 22:05:58 GMT+0800',
   	distractionFreeMode: 'false'
 })
 gitalk.render('gitalk-container') 
