@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/1696262042685.png">
 <meta property="og:image" content="https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/1696263042968.png">
 <meta property="article:published_time" content="2023-10-02T14:05:58.000Z">
-<meta property="article:modified_time" content="2023-10-02T16:26:30.718Z">
+<meta property="article:modified_time" content="2023-10-02T16:27:32.441Z">
 <meta property="article:author" content="Long HY">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -248,7 +248,7 @@
 
         <p> 哲学家吃饭问题是计算机科学中经典的多线程同步问题之一。问题描述如下：</p>
 <p>有五个哲学家围坐在圆桌上，进行思考和进食。哲学家们只做两件事：思考和吃饭。他们每人有一只碗，和一只筷子。每个哲学家面前都有一碗饭。他们思考时，不吃饭，吃饭时，不思考。</p>
-<p>这个问题的关键在于，每个哲学家都必须等待左右两边的哲学家都吃完饭才能开始吃饭。也就是说，哲学家们必须按照一个方向开始吃饭。当一个哲学家吃饭的时候，他必须等待他左右两边的哲学家都吃完。当一个哲学家思考的时候，他不会阻止其他哲学家吃饭。</p>
+<p>这个问题的关键在于，每个哲学家都必须等待左右两边的哲学家都吃完饭才能开始吃饭。也就是说，哲学家们必须按照一个方向开始吃饭。当一个哲学家吃饭的时候，他必须等待他左右两边的哲学家都吃完。当一个哲学家思考的时候，他不会阻止其他哲学家吃饭。<span id="more"></span></p>
 <p>这个问题可以用Java的synchronized关键字来解决。我们可以创建一个类来表示一个哲学家，每个哲学家只有同时拿到左右手的筷子才能吃饭，其他人只能等待旁边的哲学家吃完饭才能吃饭。</p>
 <p>一般情况下，可能出现的是这样的情况，就是每个哲学家同时拿到左手的筷子，那么他们都会在等待另一个人放下筷子，他才能拿到右手的筷子，才能去吃饭，但是如果都同时拿起左手的筷子，那么就都没有右手的筷子，这里模拟一下死锁的情况：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个独立的类，表示筷子</span><br><span class="line">public class Chopstick &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -493,11 +493,11 @@ gitalk.render('gitalk-container')
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Redis缓存</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Redis缓存</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
