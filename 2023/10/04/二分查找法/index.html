@@ -18,7 +18,7 @@
 <meta property="og:description" content="说到算法，很多人可能一开始接触到的算法就是二分查找法，这种算法思想容易理解，使用场景也比较多。但是如果有对二分查找法有较深入去研究，会发现这种算法原来也可以运用出很多不一样的东西。 首先我们先来看一下二分查找法的性能： 在没有对这种算法进行优化的情况下，它的时间复杂度和空间复杂度如下：">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-04T13:50:06.000Z">
-<meta property="article:modified_time" content="2023-10-04T16:52:13.468Z">
+<meta property="article:modified_time" content="2023-10-04T16:59:52.862Z">
 <meta property="article:author" content="Long HY">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -215,7 +215,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">11分</span>
+        <span class="post-count">12分</span>
       </span>
     </span>
 </div>
@@ -293,6 +293,7 @@
 <p>逻辑思路与最左匹配法相似，这里就不多赘述了。</p>
 <h5 id="7、二分查找法最右优先法改良版："><a href="#7、二分查找法最右优先法改良版：" class="headerlink" title="7、二分查找法最右优先法改良版："></a>7、二分查找法最右优先法改良版：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 二分查找法最右匹配版：匹配最右边相同的值</span><br><span class="line">     *     返回： &lt;= target 最靠右的索引</span><br><span class="line">     *     小于等于最靠右的位置</span><br><span class="line">     */</span><br><span class="line">    public static int binarySearchRightMost(int[] nums, int target)&#123;</span><br><span class="line">        int low = 0, high = nums.length - 1, mid;</span><br><span class="line">        while (low &lt;= high)&#123;</span><br><span class="line">            mid = (high + low) &gt;&gt;&gt; 1;  // 右移1位也相当于是除2，且适用多种语言</span><br><span class="line">            if (nums[mid] &lt;= target)&#123;  // 比中间值大或等于中间值</span><br><span class="line">                low = mid + 1;</span><br><span class="line">            &#125;else &#123;</span><br><span class="line">                high = mid - 1;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return low - 1;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>在这种方法里面，如果目标值有多个，就会返回正确的最右边的索引位置；如果不存在，就会返回比目标值大的最右索引位置，这个位置为插入位置。可以利用这种方法来求排名、后任。</p>
+<p>当然，二分查找法还有其他的实现形式，比如递归实现、迭代实现和分治实现，这些实现方法日后再做分享。</p>
 
       
         <!-- 增加版权声明 -->
@@ -534,11 +535,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">杂记</a>
+                <a href="javascript:void(0)" class="js-tag color4">Redis高并发</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Redis高并发</a>
+                <a href="javascript:void(0)" class="js-tag color3">杂记</a>
               </li>
              
               <li class="article-tag-list-item">
