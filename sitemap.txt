@@ -1,5 +1,6 @@
 https://longzas.github.io/404.html
 https://longzas.github.io/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/
+https://longzas.github.io/2023/10/04/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%B3%95/
 https://longzas.github.io/2023/10/02/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%90%83%E9%A5%AD%E9%97%AE%E9%A2%98/
 https://longzas.github.io/2023/08/29/Lua%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98/
 https://longzas.github.io/2023/08/27/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/
@@ -21,4 +22,5 @@ https://longzas.github.io/tags/Redis%E7%BC%93%E5%AD%98/
 https://longzas.github.io/tags/%E7%AE%97%E6%B3%95/
 https://longzas.github.io/categories/MySQL/
 https://longzas.github.io/categories/Redis/
+https://longzas.github.io/categories/%E7%AE%97%E6%B3%95/
 https://longzas.github.io/categories/Java/
