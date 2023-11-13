@@ -8,23 +8,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>往虚拟机的MySQL数据库插入大量数据的一种解决方案 | LongZ的博客园</title>
+  <title>LongZ的博客园</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天学习Docker，在弄MySQL容器的时候，需要往这个数据库容器里面插入大量的数据，这时在想，即便是写一个程序来导入数据应该也需要花费不少的时间吧。我就在想，有没有一种解决方案可以快速解决这个问题，突然想起了之前在学MySQL时，学到的SQL优化问题，里面就有针对insert做出的优化，就是把一个特定格式的文本文件，直接使用MySQL提供的load指令来把特定格式的文本文件加载到指定的数据库里">
-<meta property="og:type" content="article">
-<meta property="og:title" content="往虚拟机的MySQL数据库插入大量数据的一种解决方案">
-<meta property="og:url" content="http://example.com/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
+  <meta name="description" content="不值一提的普通人">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LongZ的博客园">
+<meta property="og:url" content="http://example.com/404.html">
 <meta property="og:site_name" content="LongZ的博客园">
-<meta property="og:description" content="今天学习Docker，在弄MySQL容器的时候，需要往这个数据库容器里面插入大量的数据，这时在想，即便是写一个程序来导入数据应该也需要花费不少的时间吧。我就在想，有没有一种解决方案可以快速解决这个问题，突然想起了之前在学MySQL时，学到的SQL优化问题，里面就有针对insert做出的优化，就是把一个特定格式的文本文件，直接使用MySQL提供的load指令来把特定格式的文本文件加载到指定的数据库里">
+<meta property="og:description" content="不值一提的普通人">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/.com//infile_01.png">
-<meta property="og:image" content="http://example.com/.com//infile_02.png">
-<meta property="article:published_time" content="2023-08-18T07:00:13.000Z">
-<meta property="article:modified_time" content="2023-08-21T04:54:27.065Z">
+<meta property="article:published_time" content="2023-11-13T14:18:31.179Z">
+<meta property="article:modified_time" content="2023-11-13T14:18:23.521Z">
 <meta property="article:author" content="Long HY">
-<meta property="article:tag" content="杂记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/.com//infile_01.png">
   
     <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
   
@@ -184,76 +180,15 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-往虚拟机的Mysql数据库插入大量数据的一种解决方案" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      往虚拟机的MySQL数据库插入大量数据的一种解决方案
-    </h1>
-  
-
-        
-        <a href="/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="archive-article-date">
-  	<time datetime="2023-08-18T07:00:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-18</time>
-</a>
-        <!-- 需要添加的位置 -->
-          <!-- 开始添加字数统计-->
-          
-            
-<div style="margin-top:10px;" class="word_count">
-    <span class="post-time">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-keyboard-o"></i>
-        <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">493字</span>
-      </span>
-    </span>
-
-    <span class="post-time">
-      &nbsp; | &nbsp;
-      <span class="post-meta-item-icon">
-        <i class="fa fa-hourglass-half"></i>
-        <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">1分</span>
-      </span>
-    </span>
-</div>
-
-            
-          <!-- 添加完成 -->
-          
-          
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
             
 
         
 
-        <p>今天学习Docker，在弄MySQL容器的时候，需要往这个数据库容器里面插入大量的数据，这时在想，即便是写一个程序来导入数据应该也需要花费不少的时间吧。我就在想，有没有一种解决方案可以快速解决这个问题，突然想起了之前在学MySQL时，学到的SQL优化问题，里面就有针对<code>insert</code>做出的优化，就是把一个特定格式的文本文件，直接使用MySQL提供的<code>load</code>指令来把特定格式的文本文件加载到指定的数据库里面。</p>
-<p>下面是我整理的一种优化方法：<span id="more"></span></p>
-<p>下图是需要准备的文本文件格式，列之间用逗号隔开（英文格式）。</p>
-<p><img src="/.com//infile_01.png" alt="infile_01"></p>
-<p>1、在连接数据库服务器的时候，加上参数  –local-infile</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql --local-infile -u root -p</span><br></pre></td></tr></table></figure>
-
-<p>2、输入正确的密码登录到数据库后，设置全局参数local-infile的值为1，开启从本地加载文件导入数据的开关</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global local-infile = 1;</span><br></pre></td></tr></table></figure>
-
-<p>3、执行<code>load</code>指令将准备好的数据，加载到表结构中</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load data local infile &#x27;/root/test.txt&#x27; into table tb_user fields terminated by &#x27;,&#x27; lines terminated by &#x27;\n&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p><strong>注：上面这句指令的意思是从本地加载数据到那个数据表，用逗号隔开，以换行符结束。</strong></p>
-<p>下面是执行完一个百万级数据量数据的执行时间，只用了接近17秒的时间，可以说是非常快的速度了。</p>
-<p><img src="/.com//infile_02.png" alt="infile_02"></p>
-<p><strong>这里也有一个小细节，就是如果文本数据是按照主键顺序来插入的话，性能是要高于乱序插入的。</strong></p>
-<p>这里也分享一个在Linux虚拟机查看文件参数的一些指令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查看文件行数</span><br><span class="line">wc -l test.sql(filename)</span><br><span class="line"># 显示前十行数据</span><br><span class="line">head filename</span><br><span class="line"># 持续显示文件后十行数据</span><br><span class="line">tail -f -n 10 filename</span><br></pre></td></tr></table></figure>
-
-
+        
       
         <!-- 增加版权声明 -->
 
@@ -266,7 +201,7 @@
           
           <br>
           <strong>本文链接：</strong>
-          <a rel="license" href="http://example.com/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">http://example.com/2023/08/18/%E5%BE%80%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8F%92%E5%85%A5%E5%A4%A7%E9%87%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</a>
+          <a rel="license" href="http://example.com/404.html">http://example.com/404.html</a>
           <br>
           <strong>版权声明：</strong>
           本作品采用
@@ -281,17 +216,6 @@
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">杂记</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
       
@@ -303,25 +227,6 @@
 </article>
 
   
-<nav id="article-nav">
-  
-    <a href="/2023/08/20/%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%89%88%E6%9C%AC%E5%8F%B7%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          序列化过程中版本号不一致的问题
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2023/08/16/%E5%AF%B9System.out.println()%E8%BF%99%E4%B8%AA%E6%89%93%E5%8D%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E8%AE%A4%E8%AF%86/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">对System.out.println()这个打印语句的认识</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -373,7 +278,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

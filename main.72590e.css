@@ -2123,7 +2123,7 @@ pre .css ~ * .id {
     display: block; }
   .body-wrap {
     margin-bottom: 0; }
-  .left-col {
+  .left-col,.mymenucontainer {
     display: none; }
   .mid-col {
     left: 0;
