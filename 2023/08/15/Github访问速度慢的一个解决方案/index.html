@@ -8,13 +8,13 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://longzas.github.io">
-  <title>Github访问速度慢的一个解决方案 | LongZ的博客园</title>
+  <title>Github访问速度慢的一个解决方案 | LongZ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="在国内，GitHub的访问速度可能较慢的原因主要有网络延迟和网络阻断问题。  网络延迟问题：GitHub的服务器架设在全球各地，因此在全球都有大量的用户。由于网络延迟的原因，不同地域的访问速度会有很大的差异，在国内的访问速度也可能较慢。 网络阻断问题：由于中国的特殊网络环境，部分GitHub的IP被墙，这意味着部分内容无法在国内访问，这也会导致GitHub在中国的访问速度受到限制。虽然GitHub">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Github访问速度慢的一个解决方案">
 <meta property="og:url" content="https://longzas.github.io/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
-<meta property="og:site_name" content="LongZ的博客园">
+<meta property="og:site_name" content="LongZ">
 <meta property="og:description" content="在国内，GitHub的访问速度可能较慢的原因主要有网络延迟和网络阻断问题。  网络延迟问题：GitHub的服务器架设在全球各地，因此在全球都有大量的用户。由于网络延迟的原因，不同地域的访问速度会有很大的差异，在国内的访问速度也可能较慢。 网络阻断问题：由于中国的特殊网络环境，部分GitHub的IP被墙，这意味着部分内容无法在国内访问，这也会导致GitHub在中国的访问速度受到限制。虽然GitHub">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://longzas.github.io/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/github_dns_img01.png">
@@ -27,7 +27,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://longzas.github.io/2023/08/15/Github%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E4%B8%80%E4%B8%AA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/github_dns_img01.png">
   
-    <link rel="alternative" href="/atom.xml" title="LongZ的博客园" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="LongZ" type="application/atom+xml">
   
   
     <link rel="icon" href="/assets/image/favicon.ico">
@@ -88,7 +88,7 @@
     			
             
     			
-    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">链接</a>
     			
             
     			
@@ -229,9 +229,9 @@
           <!--显示阅读次数-->
           
             <br/>
-            <a class="cloud-tie-join-count" href="javascript:void(0);" style="color:gray;font-size:14px;">
+            <a class="cloud-tie-join-count" href="javascript:void(0);" style="color:rgb(13, 94, 114);font-size:14px;">
             <span class="icon-sort"></span>
-            <span id="busuanzi_container_page_pv" style="color:#ef7522;font-size:14px;">
+            <span id="busuanzi_container_page_pv" style="color:#3d7889;font-size:15px;margin-left:10px;position: absolute;margin-top: -2px;">
               阅读数: <span id="busuanzi_value_page_pv"></span>次 &nbsp;&nbsp;
             </span>
             </a>
@@ -398,14 +398,29 @@ gitalk.render('gitalk-container')
     	<div class="footer-left">
     		&copy; 2023 Long HY
     	</div>
-      	<div class="footer-right">
-      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
-      	</div>
+      <div class="footer-right">
+        
+          <!-- 不蒜子统计 -->
+          <span id="busuanzi_container_site_pv">
+                  总访问量：<span id="busuanzi_value_site_pv"></span>次
+          </span>
+          <span class="post-meta-divider">|</span>
+          <span id="busuanzi_container_site_uv" style='display:none'>
+                  总访客:<span id="busuanzi_value_site_uv"></span>人
+          </span>
+        
+  
+      </div>
+
     </div>
   </div>
-  <!--页面点击小红心-->
-  <script type="text/javascript" src="/love.js"></script>
+  
 </footer>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--页面点击小红心-->
+<script type="text/javascript" src="/love.js"></script>
+
     </div>
     <script>
 	var yiliaConfig = {
@@ -453,7 +468,7 @@ gitalk.render('gitalk-container')
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">链接</a></li>
       
         
       
@@ -511,27 +526,7 @@ gitalk.render('gitalk-container')
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="https://gitee.com/long1008" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+              <a href="https://gitee.com/long1008" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>Gitee</a>
             </li>
           
         </ul>
@@ -542,7 +537,7 @@ gitalk.render('gitalk-container')
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家&lt;br&gt;&lt;br&gt;邮箱地址：longhy1008@qq.com</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">今夜无事，勾栏听曲&lt;br&gt;&lt;br&gt;积硅步，至千里。&lt;br&gt;&lt;br&gt;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;共同努力！&lt;br&gt;&lt;br&gt;邮箱地址：longhy1008@qq.com</div>
   	  	
     	</section>
     
