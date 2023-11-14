@@ -847,8 +847,8 @@ html {
 }
 
 .left-col #header a {
-    color: #1a1a1a;
-    font-size: 14px;
+    color: #cbece9;
+    #font-size: 14px;
 }
 
 .left-col #header a:hover {
@@ -857,13 +857,14 @@ html {
 
 .left-col #header .header-subtitle {
     text-align: center;
-    color: #999;
-    font-size: 14px;
+    color: #c1e8ff;
+    font-size: 18px;
     line-height: 25px;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2
+    #display: -webkit-box;
+    -webkit-line-clamp: 2;
+    padding-bottom: 20px;
 }
 
 .left-col #header .header-menu {
@@ -1909,7 +1910,7 @@ pre .id {
 
 .tools-col .tools-section .search-tag.tagcloud .search-switch input:before {
     content: "";
-    width: 40px;
+    width: 30px;
     height: 14px;
     border: 1px solid #bdcabc;
     background-color: #fdfdfd;
@@ -1944,7 +1945,7 @@ pre .id {
     position: absolute;
     top: 14px;
     left: 2px;
-    -webkit-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%)  translateX(-50%);
     border-radius: 100%;
     background-color: #91c0f1;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .4);
@@ -3343,7 +3344,7 @@ pre .id {
         margin: 0;
         position: relative;
         z-index: 2;
-        color: #424242
+        color: #58dece;
     }
 
     #mobile-nav .overlay {
@@ -3470,7 +3471,7 @@ pre .id {
         line-height: 25px;
         overflow: hidden;
         text-overflow: ellipsis;
-        display: -webkit-box;
+        #display: -webkit-box;
         -webkit-line-clamp: 2;
         padding: 0 24px
     }
